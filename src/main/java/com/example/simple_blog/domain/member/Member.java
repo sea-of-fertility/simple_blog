@@ -3,10 +3,7 @@ package com.example.simple_blog.domain.member;
 
 import com.example.simple_blog.domain.post.Post;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,12 +20,13 @@ public class Member {
     @Column(unique = true, nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String memberNickName;
 
     @Column(nullable = false)
     private String memberName;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
@@ -49,4 +47,5 @@ public class Member {
         this.role = role != null? role: "ROLE_USER";
         this.posts = posts;
     }
+
 }

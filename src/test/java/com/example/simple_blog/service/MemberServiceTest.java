@@ -1,6 +1,7 @@
 package com.example.simple_blog.service;
 
 import com.example.simple_blog.domain.member.Member;
+import com.example.simple_blog.exception.member.DuplicatedAddress;
 import com.example.simple_blog.exception.member.InvalidEmailException;
 import com.example.simple_blog.exception.member.MemberException;
 import com.example.simple_blog.exception.member.MemberNotFoundException;
@@ -49,8 +50,34 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("중복된 이메일")
+    public void duplicatedAddress() throws Exception {
+        //given
+        Member nick = Member.builder()
+                .address("hello@naver.com")
+                .memberNickName("nick")
+                .memberName("hello")
+                .password("0000")
+                .build();
+        //when
+        Member save = memberService.save(nick);
+
+        //then
+        Assertions.assertThatThrownBy(() -> {
+            Member duplicate = Member.builder()
+                    .address("hello@naver.com")
+                    .memberNickName("nick")
+                    .memberName("hello")
+                    .password("0000")
+                    .build();
+            memberService.save(nick);
+        }).isInstanceOf(DuplicatedAddress.class)
+                .hasMessage("중복된 이메일입니다.");
+    }
+
+    @Test
     @DisplayName("이메일 형식이 아닌 가입")
-    public void joinFail() throws Exception {
+    public void notAddressType() throws Exception {
         //given
         Member nick = Member.builder()
                 .address("hellonaver.com")
