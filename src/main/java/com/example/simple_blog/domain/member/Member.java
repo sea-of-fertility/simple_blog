@@ -26,7 +26,6 @@ public class Member {
     @Column(nullable = false)
     private String memberName;
 
-    @Setter
     @Column(nullable = false)
     private String password;
 
@@ -37,6 +36,10 @@ public class Member {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
+
+    public void passwordencode(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 
     @Builder
     public Member(String address, String memberNickName, String memberName, String password, String role, List<Post> posts) {

@@ -1,6 +1,8 @@
-package com.example.simple_blog.exception.member;
+package com.example.simple_blog.exception.member.login;
 
-public class MemberNotFoundException extends MemberException{
+import com.example.simple_blog.exception.member.MemberException;
+
+public class MemberNotFoundException extends MemberException {
 
     private final static String MESSAGE = "가입되지 않은 사용자압니다.";
 

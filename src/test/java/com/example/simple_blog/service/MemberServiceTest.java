@@ -1,10 +1,9 @@
 package com.example.simple_blog.service;
 
 import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.exception.member.DuplicatedAddress;
-import com.example.simple_blog.exception.member.InvalidEmailException;
+import com.example.simple_blog.exception.member.join.DuplicatedAddress;
 import com.example.simple_blog.exception.member.MemberException;
-import com.example.simple_blog.exception.member.MemberNotFoundException;
+import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.MemberRepository;
 import com.example.simple_blog.service.member.MemberService;
 import org.assertj.core.api.Assertions;

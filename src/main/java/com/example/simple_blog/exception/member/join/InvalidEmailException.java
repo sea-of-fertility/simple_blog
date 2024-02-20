@@ -1,6 +1,8 @@
-package com.example.simple_blog.exception.member;
+package com.example.simple_blog.exception.member.join;
 
-public class InvalidEmailException extends MemberException{
+import com.example.simple_blog.exception.member.MemberException;
+
+public class InvalidEmailException extends MemberException {
 
     private final static String MESSAGE = "유효하지 않는 이메일 형식입니다.";
 

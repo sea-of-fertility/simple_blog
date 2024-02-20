@@ -34,7 +34,7 @@ public class Post {
     private final LocalTime createTime = LocalTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     private Member member;
 
     @Builder

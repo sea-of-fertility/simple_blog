@@ -8,6 +8,12 @@ spring:
     hibernate:
       ddl-auto: create
 
+login:
+  url: /login
+
+jwt:
+  secret: qpcowskmcfiefubnodfg
+
 front:
   url: ??
 

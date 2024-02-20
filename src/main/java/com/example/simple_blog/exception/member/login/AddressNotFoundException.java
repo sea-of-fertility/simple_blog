@@ -1,6 +1,8 @@
-package com.example.simple_blog.exception.member;
+package com.example.simple_blog.exception.member.login;
 
-public class AddressNotFoundException extends MemberException{
+import com.example.simple_blog.exception.member.MemberException;
+
+public class AddressNotFoundException extends MemberException {
 
     public AddressNotFoundException() {
         super();
