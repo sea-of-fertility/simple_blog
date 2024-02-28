@@ -17,8 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class MemberServiceTest {
 
-
-
     @Autowired
     private MemberService memberService;
 
@@ -29,6 +27,7 @@ class MemberServiceTest {
     public void setMemberRepository() {
         memberRepository.deleteAll();
     }
+
 
     @Test
     @DisplayName("가입 성공")
@@ -47,6 +46,7 @@ class MemberServiceTest {
         Member byAddress = memberRepository.findByAddress(nick.getAddress()).orElseThrow(MemberNotFoundException::new);
         Assertions.assertThat(nick.getAddress()).isEqualTo(byAddress.getAddress());
     }
+
 
     @Test
     @DisplayName("중복된 이메일")
@@ -73,6 +73,7 @@ class MemberServiceTest {
         }).isInstanceOf(DuplicatedAddress.class)
                 .hasMessage("중복된 이메일입니다.");
     }
+
 
     @Test
     @DisplayName("이메일 형식이 아닌 가입")

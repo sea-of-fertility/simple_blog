@@ -1,4 +1,4 @@
-package com.example.simple_blog.request.JoinDto;
+package com.example.simple_blog.request.member;
 
 
 import com.example.simple_blog.domain.member.Member;

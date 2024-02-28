@@ -19,12 +19,13 @@ public class MemberService {
     public Member save(Member member) {
         String address = member.getAddress();
 
-        if(!JoinValidator.isValidEmail(address))
-            throw new InvalidEmailException();
-
-        else if (memberRepository.existsByAddress(address)) {
+        if (memberRepository.existsByAddress(address)) {
             throw new DuplicatedAddress();
         }
+
+        else if(!JoinValidator.isValidEmail(address))
+            throw new InvalidEmailException();
+
 
         member.passwordencode(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member);

@@ -2,7 +2,7 @@ package com.example.simple_blog.controller.member;
 
 
 import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.request.JoinDto.JoinDto;
+import com.example.simple_blog.request.member.JoinDto;
 import com.example.simple_blog.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,4 +24,6 @@ public class MemberController {
         Member member = joinDto.toEntity();
         Member save = memberService.save(member);
     }
+
+
 }
