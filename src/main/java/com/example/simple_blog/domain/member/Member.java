@@ -3,11 +3,15 @@ package com.example.simple_blog.domain.member;
 
 import com.example.simple_blog.domain.post.Post;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.simple_blog.service.member.JoinValidator.*;
 
 @Entity
 @Getter
@@ -18,15 +22,19 @@ public class Member {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @Pattern(regexp = EMAIL_PATTERN, message = "형식에 맞게 설졍해주세요")
     private String address;
 
     @Column(nullable = false, unique = true)
+    @Pattern(regexp = NICKNAME_PATTERN, message = "형식에 맞게 설졍해주세요")
     private String memberNickName;
 
     @Column(nullable = false)
     private String memberName;
 
     @Column(nullable = false)
+    @Pattern(regexp = PASSWORD_PATTERN, message = "형식에 맞게 설졍해주세요")
+    @Size(min = 8, max = 13, message = "길이는 8 ~ 13 사이로 해주세요")
     private String password;
 
     @Temporal(value = TemporalType.DATE)

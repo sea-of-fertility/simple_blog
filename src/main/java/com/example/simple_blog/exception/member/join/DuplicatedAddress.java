@@ -2,7 +2,7 @@ package com.example.simple_blog.exception.member.join;
 
 import com.example.simple_blog.exception.member.MemberException;
 
-public class DuplicatedAddress extends MemberException {
+public class DuplicatedAddress extends JoinException {
 
     private static final String MESSAGE = "중복된 이메일입니다.";
 

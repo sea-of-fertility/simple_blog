@@ -74,7 +74,6 @@ class MemberServiceTest {
                 .hasMessage("중복된 이메일입니다.");
     }
 
-
     @Test
     @DisplayName("이메일 형식이 아닌 가입")
     public void notAddressType() throws Exception {
@@ -88,8 +87,17 @@ class MemberServiceTest {
 
         //then
         Assertions.assertThatThrownBy(() -> {
-            Member save = memberService.save(nick);
+            memberService.save(nick);
         }).isInstanceOfAny(MemberException.class);
     }
 
+    @Test
+    @DisplayName("잘못된 닉네임 형식")
+    public void invalidNickName() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
 }
