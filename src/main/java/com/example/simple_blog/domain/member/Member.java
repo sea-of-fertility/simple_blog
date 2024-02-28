@@ -3,15 +3,15 @@ package com.example.simple_blog.domain.member;
 
 import com.example.simple_blog.domain.post.Post;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.simple_blog.service.member.JoinValidator.*;
 
 @Entity
 @Getter

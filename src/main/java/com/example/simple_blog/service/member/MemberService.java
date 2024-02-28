@@ -22,6 +22,7 @@ public class MemberService {
 
         try {
             checkJoin(member);
+            member.passwordencode(member.getPassword());
             return memberRepository.save(member);
 
         } catch (JoinException e) {
