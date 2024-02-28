@@ -95,9 +95,16 @@ class MemberServiceTest {
     @DisplayName("잘못된 닉네임 형식")
     public void invalidNickName() throws Exception {
         //given
-
-        //when
+        Member nick = Member.builder()
+                .address("hello@naver.com")
+                .memberNickName("nick!!") // 특수문자가 들어간 잘못된 닉네임 형식
+                .memberName("hello")
+                .password("a12345678@")
+                .build();
 
         //then
+        Assertions.assertThatThrownBy(() -> {
+            memberService.save(nick);
+        }).isInstanceOfAny(MemberException.class);
     }
 }

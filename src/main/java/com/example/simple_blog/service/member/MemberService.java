@@ -39,7 +39,11 @@ public class MemberService {
         }
         else if (!JoinValidator.isValidEmail(member.getAddress())) {
             throw new InvalidEmailException();
-        } else if (!JoinValidator.isValidPassword(member.getPassword())) {
+        }
+        else if(!JoinValidator.isValidNickName(member.getMemberNickName())){
+            throw new InvalidNickNameException();
+        }
+        else if (!JoinValidator.isValidPassword(member.getPassword())) {
             throw new InvalidPasswordException();
         }
     }

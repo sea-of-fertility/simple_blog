@@ -8,15 +8,17 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+import static com.example.simple_blog.service.member.JoinValidator.*;
+
 public class  JoinDto {
 
     @NotBlank
-    @Email
+    @Pattern(regexp = EMAIL_PATTERN, message = "이메일 형식에 맞게 설졍해주세요")
     private final String address;
 
     @NotBlank
     @Size(min = 1, max = 8)
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣]*$", message = "특수문자는 사용할 수 없습니다.")
+    @Pattern(regexp = NICKNAME_PATTERN, message = "길이는 1~8, 특수문자는 사용하지 못합니다.")
     private final String memberNickName;
 
     @NotBlank
@@ -24,6 +26,7 @@ public class  JoinDto {
     private final String memberName;
 
     @NotBlank
+    @Pattern(regexp = PASSWORD_PATTERN, message = "형식에 맞게 설졍해주세요")
     @Size(min = 8, max = 13)
     private final String password;
 
