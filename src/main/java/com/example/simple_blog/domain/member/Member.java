@@ -46,6 +46,10 @@ public class Member {
         this.password = encodedPassword;
     }
 
+    public void passwordChange(String newPassword) {
+        this.password = newPassword;
+    }
+
     @Builder
     public Member(String address, String memberNickName, String memberName, String password, String role, List<Post> posts) {
         this.address = address;

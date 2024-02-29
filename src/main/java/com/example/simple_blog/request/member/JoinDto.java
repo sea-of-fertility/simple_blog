@@ -2,11 +2,11 @@ package com.example.simple_blog.request.member;
 
 
 import com.example.simple_blog.domain.member.Member;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.example.simple_blog.service.member.JoinValidator.*;
 
@@ -30,6 +30,7 @@ public class  JoinDto {
     @Size(min = 8, max = 13)
     private final String password;
 
+
     @Builder
     public JoinDto(String address, String memberNickName, String memberName, String password) {
         this.address = address;
@@ -39,12 +40,12 @@ public class  JoinDto {
     }
 
 
-    public Member toEntity() {
+    public Member toEntity(PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .address(this.address)
                 .memberName(this.memberName)
                 .memberNickName(this.memberNickName)
-                .password(this.password)
+                .password(passwordEncoder.encode(this.password))
                 .build();
     }
 }

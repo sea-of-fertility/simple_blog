@@ -22,7 +22,8 @@ public class MemberService {
 
         try {
             checkJoin(member);
-            member.passwordencode(member.getPassword());
+            String encode = passwordEncoder.encode(member.getPassword());
+            member.passwordencode(encode);
             return memberRepository.save(member);
 
         } catch (JoinException e) {
@@ -31,15 +32,23 @@ public class MemberService {
         }
             }
 
+    public void passwordChange(Member member, String newPassword) {
+        if (!JoinValidator.isValidPassword(newPassword))
+            throw new InvalidPasswordException();
+
+        String encode = passwordEncoder.encode(newPassword);
+        member.passwordChange(encode);
+    }
+
     public void checkJoin(Member member) {
         if (memberRepository.existsByAddress(member.getAddress())) {
             throw new DuplicatedAddress();
         }
-        else if (memberRepository.existsByMemberNickName(member.getMemberNickName())){
-            throw new DuplicateNickName();
-        }
         else if (!JoinValidator.isValidEmail(member.getAddress())) {
             throw new InvalidEmailException();
+        }
+        else if (memberRepository.existsByMemberNickName(member.getMemberNickName())){
+            throw new DuplicateNickName();
         }
         else if(!JoinValidator.isValidNickName(member.getMemberNickName())){
             throw new InvalidNickNameException();
