@@ -20,7 +20,6 @@ class MemberServiceTest {
 
     private String testPassword = "a12345678@";
 
-
     @Autowired
     private MemberService memberService;
 
@@ -51,10 +50,10 @@ class MemberServiceTest {
         Assertions.assertThat(nick.getAddress()).isEqualTo(byAddress.getAddress());
     }
 
-
     @Test
     @DisplayName("중복된 이메일")
     public void duplicatedAddress() throws Exception {
+
         //given
         Member nick = Member.builder()
                 .address("hello@naver.com")
@@ -62,6 +61,7 @@ class MemberServiceTest {
                 .memberName("hello")
                 .password(testPassword)
                 .build();
+
         //when
         Member save = memberService.save(nick);
 
@@ -80,6 +80,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("중복된 닉네임")
     public void duplicateNickName() throws Exception {
+
         //given
         Member nick = Member.builder()
                 .address("hello12@naver.com")
@@ -87,6 +88,7 @@ class MemberServiceTest {
                 .memberName("hello")
                 .password(testPassword)
                 .build();
+
         //when
         Member save = memberService.save(nick);
 
@@ -101,6 +103,7 @@ class MemberServiceTest {
                     memberService.save(duplicate);
                 }).isInstanceOf(DuplicateNickName.class);
     }
+
 
     @Test
     @DisplayName("잘못된 이메일 형식")
@@ -119,6 +122,7 @@ class MemberServiceTest {
         }).isInstanceOfAny(MemberException.class);
     }
 
+
     @Test
     @DisplayName("잘못된 닉네임 형식")
     public void invalidNickName() throws Exception {
@@ -136,13 +140,14 @@ class MemberServiceTest {
         }).isInstanceOfAny(MemberException.class);
     }
 
+
     @Test
     @DisplayName("잘못된 비밀번호 형식")
     public void invalidPassword() throws Exception {
         //given
         Member nick = Member.builder()
                 .address("hello@naver.com")
-                .memberNickName("nick!!") // 특수문자가 들어간 잘못된 닉네임 형식
+                .memberNickName("nick")
                 .memberName("hello")
                 .password("1234")
                 .build();
@@ -151,5 +156,27 @@ class MemberServiceTest {
         Assertions.assertThatThrownBy(() -> {
             memberService.save(nick);
         }).isInstanceOfAny(MemberException.class);
+    }
+
+
+    @Test
+    @DisplayName("비밀번호 변경")
+    public void changePassword() throws Exception {
+        //given
+        Member nick = Member.builder()
+                .address("hello@naver.com")
+                .memberNickName("nick")
+                .memberName("hello")
+                .password(testPassword)
+                .build();
+        memberService.save(nick);
+        String beforePassword = nick.getPassword();
+
+        //when
+        memberService.passwordChange(nick, "ChangePWD+1");
+        String afterPassword = nick.getPassword();
+
+        //then
+        Assertions.assertThat(beforePassword).isNotEqualTo(afterPassword);
     }
 }

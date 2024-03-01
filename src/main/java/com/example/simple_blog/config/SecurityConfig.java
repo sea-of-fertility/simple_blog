@@ -67,7 +67,6 @@ public class SecurityConfig {
                                 .default_url(defaultUrl)
                                 .obj(objectMapper)
                                 .jwtUtil(jwtUtil)
-                                .authenticationManager(authenticationManager(authenticationConfiguration))
                                 .build()
                         , UsernamePasswordAuthenticationFilter.class);
 

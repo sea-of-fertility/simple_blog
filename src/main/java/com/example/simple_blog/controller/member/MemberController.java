@@ -22,9 +22,12 @@ public class MemberController {
 
     @PostMapping("/join")
     public void MemberJoin(@RequestBody @Validated JoinDto joinDto) {
-        Member member = joinDto.toEntity(passwordEncoder);
+        Member member = joinDto.toEntity();
         Member save = memberService.save(member);
     }
 
-
+    @PostMapping("/changePWD")
+    public void ChangePWD(Member member, String newPWD) {
+        memberService.passwordChange(member, newPWD);
+    }
 }

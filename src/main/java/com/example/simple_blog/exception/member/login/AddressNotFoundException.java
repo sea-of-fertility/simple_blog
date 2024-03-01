@@ -1,18 +1,16 @@
 package com.example.simple_blog.exception.member.login;
 
-import com.example.simple_blog.exception.member.MemberException;
+import javax.naming.AuthenticationException;
 
-public class AddressNotFoundException extends LoginException {
+public class AddressNotFoundException extends AuthenticationException {
+
+    private final static String MESSAGE = "가입되지 않은 이메일입니다.";
 
     public AddressNotFoundException() {
-        super();
+        super(MESSAGE);
     }
 
-    public AddressNotFoundException(String message) {
-        super(message);
-    }
-
-    public AddressNotFoundException(String message, Throwable cause) {
-        super(message, cause);
+    public AddressNotFoundException(String explanation) {
+        super(explanation);
     }
 }

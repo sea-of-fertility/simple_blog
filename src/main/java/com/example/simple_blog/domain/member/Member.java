@@ -3,7 +3,6 @@ package com.example.simple_blog.domain.member;
 
 import com.example.simple_blog.domain.post.Post;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +30,6 @@ public class Member {
     private String memberName;
 
     @Column(nullable = false)
-    @Size(min = 8, max = 13, message = "길이는 8 ~ 13 사이로 해주세요")
     private String password;
 
     @Temporal(value = TemporalType.DATE)
@@ -42,7 +40,7 @@ public class Member {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
-    public void passwordencode(String encodedPassword) {
+    public void passwordEncode(String encodedPassword) {
         this.password = encodedPassword;
     }
 

@@ -3,7 +3,6 @@ package com.example.simple_blog.service.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.join.*;
-import com.example.simple_blog.exception.member.MemberException;
 import com.example.simple_blog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +20,11 @@ public class MemberService {
     public Member save(Member member) {
 
         try {
+            log.info("checkJoin 전{}", member.getPassword());
             checkJoin(member);
+            log.info("checkJoin 후{}", member.getPassword());
             String encode = passwordEncoder.encode(member.getPassword());
-            member.passwordencode(encode);
+            member.passwordEncode(encode);
             return memberRepository.save(member);
 
         } catch (JoinException e) {
@@ -37,6 +38,7 @@ public class MemberService {
             throw new InvalidPasswordException();
 
         String encode = passwordEncoder.encode(newPassword);
+        log.info("{}", encode);
         member.passwordChange(encode);
     }
 

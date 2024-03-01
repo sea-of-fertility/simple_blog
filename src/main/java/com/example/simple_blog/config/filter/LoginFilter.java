@@ -1,6 +1,7 @@
 package com.example.simple_blog.config.filter;
 
 import com.example.simple_blog.config.MemberDetail;
+import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.jwt.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -9,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.authentication.AuthenticationManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,19 +22,19 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+
+@Slf4j
 public class LoginFilter extends AbstractAuthenticationProcessingFilter{
 
     private final JwtUtil jwtUtil;
     private final ObjectMapper obj;
-    private final AuthenticationManager authenticationManager;
     private boolean postOnly = true;
 
     @Builder
-    public LoginFilter(String default_url, JwtUtil jwtUtil, ObjectMapper obj, AuthenticationManager authenticationManager) {
+    public LoginFilter(String default_url, JwtUtil jwtUtil, ObjectMapper obj) {
         super(default_url);
         this.jwtUtil = jwtUtil;
         this.obj = obj;
-        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -47,7 +48,6 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
         UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(login.getAddress(),
                 login.getPassword());
 
-        // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);
     }
@@ -78,6 +78,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         super.unsuccessfulAuthentication(request, response, failed);
+        log.info("unsuccessfulAuthentication {}", failed);
     }
 
     @Getter

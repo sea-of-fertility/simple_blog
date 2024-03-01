@@ -40,12 +40,12 @@ public class  JoinDto {
     }
 
 
-    public Member toEntity(PasswordEncoder passwordEncoder) {
+    public Member toEntity() {
         return Member.builder()
                 .address(this.address)
                 .memberName(this.memberName)
                 .memberNickName(this.memberNickName)
-                .password(passwordEncoder.encode(this.password))
+                .password(this.password)
                 .build();
     }
 }
