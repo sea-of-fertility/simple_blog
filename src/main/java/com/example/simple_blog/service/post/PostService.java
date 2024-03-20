@@ -12,6 +12,6 @@ public class PostService {
     private final PostRepository postRepository;
 
     public void post(Post post) {
-
+        postRepository.save(post);
     }
 }

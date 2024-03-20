@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/join")
     public void MemberJoin(@RequestBody @Validated JoinDto joinDto) {
@@ -26,8 +25,10 @@ public class MemberController {
         Member save = memberService.save(member);
     }
 
-    @PostMapping("/changePWD")
+    @PostMapping("/changed/pwd")
     public void ChangePWD(Member member, String newPWD) {
         memberService.passwordChange(member, newPWD);
     }
+
+
 }
