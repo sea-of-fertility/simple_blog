@@ -34,6 +34,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
 
+
     @Value("${login.url}")
     private String defaultUrl;
 
@@ -67,6 +68,7 @@ public class SecurityConfig {
                                 .default_url(defaultUrl)
                                 .obj(objectMapper)
                                 .jwtUtil(jwtUtil)
+                                .authenticationManager(authenticationManager(authenticationConfiguration))
                                 .build()
                         , UsernamePasswordAuthenticationFilter.class);
 

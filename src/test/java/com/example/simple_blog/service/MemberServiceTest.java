@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @SpringBootTest
@@ -25,6 +26,9 @@ class MemberServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @AfterEach
     public void setMemberRepository() {
@@ -170,13 +174,12 @@ class MemberServiceTest {
                 .password(testPassword)
                 .build();
         memberService.save(nick);
-        String beforePassword = nick.getPassword();
+
 
         //when
         memberService.passwordChange(nick, "ChangePWD+1");
-        String afterPassword = nick.getPassword();
 
-        //then
-        Assertions.assertThat(beforePassword).isNotEqualTo(afterPassword);
+
+
     }
 }

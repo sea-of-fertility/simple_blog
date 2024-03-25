@@ -70,6 +70,22 @@ class MemberControllerTest {
                         .content(json))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경하기")
+    public void pwdChange() throws Exception {
+        //given
+        Member nick = Member.builder()
+                .address("hello@naver.com")
+                .memberNickName("nick")
+                .memberName("hello")
+                .password(testPassword)
+                .build();
+
+        memberService.save(nick);
+
 
     }
+
 }

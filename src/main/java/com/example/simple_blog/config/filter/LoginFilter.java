@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,11 +30,14 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
     private final JwtUtil jwtUtil;
     private final ObjectMapper obj;
     private boolean postOnly = true;
+    private AuthenticationManager authenticationManager;
+
 
     @Builder
-    public LoginFilter(String default_url, JwtUtil jwtUtil, ObjectMapper obj) {
+    public LoginFilter(String default_url, JwtUtil jwtUtil, ObjectMapper obj, AuthenticationManager authenticationManager) {
         super(default_url);
         this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
         this.obj = obj;
     }
 
@@ -49,7 +53,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
                 login.getPassword());
 
         setDetails(request, authRequest);
-        return this.getAuthenticationManager().authenticate(authRequest);
+        return authenticationManager.authenticate(authRequest);
     }
 
     protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
