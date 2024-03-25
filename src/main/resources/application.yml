@@ -12,7 +12,7 @@ login:
   url: /login
 
 jwt:
-  secret: qpcowskmcfiefubnodfg
+  secret:
 
 front:
   url: ??
