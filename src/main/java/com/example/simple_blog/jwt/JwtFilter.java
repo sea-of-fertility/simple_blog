@@ -1,20 +1,17 @@
 package com.example.simple_blog.jwt;
 
-import com.example.simple_blog.config.MemberDetail;
-import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.exception.token.TokenExpiredException;
-import com.example.simple_blog.exception.token.TokenNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import static com.example.simple_blog.config.properties.TokenProperties.ACCESS_TOKEN_NAME;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -25,31 +22,32 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorization = request.getHeader("Authorization");
-        if (authorization == null || !authorization.startsWith("Bearer ")){
-            throw new TokenNotFoundException();
+        String accessToken = request.getHeader(ACCESS_TOKEN_NAME);
+        if (accessToken == null) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        String token = authorization.split(" ")[1];
-
-        if (jwtUtil.isExpired(token)) {
-            throw new TokenExpiredException();
+        try {
+            jwtUtil.isExpired(accessToken);
+        } catch (ExpiredJwtException e) {
+            PrintWriter writer = response.getWriter();
+            writer.print("access token expired");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
-        String address = jwtUtil.getAddress(token);
+        String category = jwtUtil.getCategory(accessToken);
+        if (!category.equals(ACCESS_TOKEN_NAME)) {
+            PrintWriter writer = response.getWriter();
+            writer.print("invalid access token");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
+        String address = jwtUtil.getAddress(accessToken);
+        String role = jwtUtil.getRole(accessToken);
 
-        Member build = Member.builder()
-                .address(address)
-                .build();
-
-        MemberDetail customUserDetails = new MemberDetail(build);
-
-        //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        //세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
+        //todo  address, role 값을 획득
     }
 }

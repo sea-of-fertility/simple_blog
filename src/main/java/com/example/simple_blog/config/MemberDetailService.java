@@ -19,7 +19,7 @@ public class MemberDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String address) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByAddress(address)
-                .orElseThrow(() -> new AddressNotFoundException("가입되지 않은 이메일 입니다."));
+                .orElseThrow(AddressNotFoundException::new);
 
         return new MemberDetail(member);
     }

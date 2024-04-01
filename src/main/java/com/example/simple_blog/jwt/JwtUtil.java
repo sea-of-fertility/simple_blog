@@ -16,7 +16,6 @@ public class JwtUtil {
     private final SecretKey secretKey = SecureKeyGenerator.generateKey();
 
     public JwtUtil() throws NoSuchAlgorithmException {
-
     }
 
 
@@ -36,6 +35,13 @@ public class JwtUtil {
                 .get("role", String.class);
     }
 
+    public String getCategory(String token) {
+        return Jwts.parser().verifyWith(secretKey).build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("category", String.class);
+    }
+
     public Boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey)
                 .build()
@@ -45,9 +51,10 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public String createJwt(Long memberId, String role, Long expireMs) {
+    public String createJwt(String category, String address, String role, Long expireMs) {
         return Jwts.builder()
-                .claim("memberId", memberId)
+                .claim("category", category)
+                .claim("address", address)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expireMs))

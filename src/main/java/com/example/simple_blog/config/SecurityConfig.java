@@ -1,10 +1,12 @@
 package com.example.simple_blog.config;
 
 import com.example.simple_blog.config.filter.LoginFilter;
+import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.jwt.JwtFilter;
 import com.example.simple_blog.jwt.JwtUtil;
 import com.example.simple_blog.repository.MemberRepository;
+import com.example.simple_blog.service.token.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,11 +30,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
-
+    private final RefreshTokenService refreshTokenService;
+    private final TokenProperties tokenProperties;
 
 
     @Value("${login.url}")
@@ -65,11 +67,13 @@ public class SecurityConfig {
 
         http
                 .addFilterAt(LoginFilter.builder()
-                                .default_url(defaultUrl)
-                                .obj(objectMapper)
-                                .jwtUtil(jwtUtil)
-                                .authenticationManager(authenticationManager(authenticationConfiguration))
-                                .build()
+                        .defaultFilterProcessesUrl(defaultUrl)
+                        .objectMapper(objectMapper)
+                        .jwtUtil(jwtUtil)
+                        .authenticationManager(authenticationManager(authenticationConfiguration))
+                        .refreshTokenService(refreshTokenService)
+                        .tokenProperties(tokenProperties)
+                        .build()
                         , UsernamePasswordAuthenticationFilter.class);
 
         http

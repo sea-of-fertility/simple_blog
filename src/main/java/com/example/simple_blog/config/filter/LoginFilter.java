@@ -1,18 +1,21 @@
 package com.example.simple_blog.config.filter;
 
-import com.example.simple_blog.config.MemberDetail;
-import com.example.simple_blog.exception.member.login.MemberNotFoundException;
+import com.example.simple_blog.config.properties.TokenProperties;
+import com.example.simple_blog.domain.Refresh;
+import com.example.simple_blog.exception.member.login.LoginFailedException;
 import com.example.simple_blog.jwt.JwtUtil;
+import com.example.simple_blog.service.token.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -21,39 +24,45 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 
 @Slf4j
 public class LoginFilter extends AbstractAuthenticationProcessingFilter{
 
-    private final JwtUtil jwtUtil;
-    private final ObjectMapper obj;
-    private boolean postOnly = true;
-    private AuthenticationManager authenticationManager;
 
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final ObjectMapper objectMapper;
+    private final TokenProperties tokenProperties;
+    private final RefreshTokenService refreshTokenService;
 
     @Builder
-    public LoginFilter(String default_url, JwtUtil jwtUtil, ObjectMapper obj, AuthenticationManager authenticationManager) {
-        super(default_url);
+    public LoginFilter(String defaultFilterProcessesUrl, String defaultFilterProcessesUrl1, JwtUtil jwtUtil,
+                       AuthenticationManager authenticationManager, ObjectMapper objectMapper, TokenProperties tokenProperties,
+                       RefreshTokenService refreshTokenService) {
+        super(defaultFilterProcessesUrl);
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
-        this.obj = obj;
+        this.objectMapper = objectMapper;
+        this.tokenProperties = tokenProperties;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException {
 
-        if (this.postOnly && !request.getMethod().equals("POST")) {
-            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
-        }
-        login login = obj.readValue(request.getInputStream(), login.class);
+        LoginJson loginJson = objectMapper.readValue(request.getInputStream(), LoginJson.class);
+        UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken
+                .unauthenticated(loginJson.getAddress(),
+                        loginJson.getPassword());
 
-        UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(login.getAddress(),
-                login.getPassword());
-
+        // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
-        return authenticationManager.authenticate(authRequest);
+
+        return this.authenticationManager.authenticate(authRequest);
     }
 
     protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
@@ -61,33 +70,53 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+        log.info("===========LoginFilter============");
 
-        MemberDetail memberDetail = (MemberDetail) authResult.getPrincipal();
-
-        Long memberId = memberDetail.getMemberId();
-
-
-        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+        String address = authentication.getName();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(memberId, role, 60*60*10L);
+        String access = jwtUtil.createJwt("access", address, role,
+                tokenProperties.getAccessTokenExpirationMinutes());
+        String refresh = jwtUtil.createJwt("refresh", address, role,
+                tokenProperties.getRefreshTokenExpirationDays());
 
-        response.addHeader("Authorization", "Bearer " + token);
+        addRefresh(address, refresh, tokenProperties.getRefreshTokenExpirationDays());
+
+        response.setHeader("access", access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        super.unsuccessfulAuthentication(request, response, failed);
-        log.info("unsuccessfulAuthentication {}", failed);
+        throw new LoginFailedException();
+    }
+
+    private void addRefresh(String address, String refresh, Long expiredMs) {
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+        Refresh refreshDomain = Refresh.builder()
+                .userAddress(address)
+                .refresh(refresh)
+                .expired(date.getTime())
+                .build();
+
+        refreshTokenService.save(refreshDomain);
     }
 
     @Getter
-    private static class login {
+    private static class LoginJson {
         private String address;
         private String password;
+    }
+
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 }
