@@ -77,7 +77,7 @@ public class SecurityConfig {
                         , UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
 
         http
                 .csrf(AbstractHttpConfigurer::disable);
