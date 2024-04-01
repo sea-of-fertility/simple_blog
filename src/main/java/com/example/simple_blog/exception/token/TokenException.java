@@ -1,9 +1,7 @@
 package com.example.simple_blog.exception.token;
 
-public abstract class TokenException extends  RuntimeException {
 
-
-
+public abstract class TokenException extends  RuntimeException{
     public TokenException() {
         super();
     }
@@ -15,4 +13,6 @@ public abstract class TokenException extends  RuntimeException {
     public TokenException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public abstract int statusCode();
 }
