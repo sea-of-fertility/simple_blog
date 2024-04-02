@@ -1,4 +1,4 @@
-package com.example.simple_blog.service;
+package com.example.simple_blog.service.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.join.DuplicateNickName;
@@ -39,6 +39,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("가입 성공")
     public void joinTest() throws Exception {
+
         //given
         Member nick = Member.builder()
                 .address("hello@naver.com")
@@ -46,6 +47,7 @@ class MemberServiceTest {
                 .memberName("hello")
                 .password(testPassword)
                 .build();
+
         //when
         Member save = memberService.save(nick);
 

@@ -3,11 +3,14 @@ package com.example.simple_blog.service.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.join.*;
+import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -16,6 +19,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public Member findByMemberId(Long id) throws MemberNotFoundException {
+        return memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+    }
 
     public Member save(Member member) {
 

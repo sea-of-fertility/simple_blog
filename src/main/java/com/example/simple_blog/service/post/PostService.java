@@ -1,7 +1,10 @@
 package com.example.simple_blog.service.post;
 
+import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Post;
+import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +13,12 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final MemberService memberService;
 
-    public void post(Post post) {
+
+    public void post(Long memberId, Post post) throws MemberNotFoundException {
+
+
         postRepository.save(post);
     }
 }
