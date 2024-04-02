@@ -49,5 +49,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String role = jwtUtil.getRole(accessToken);
 
         //todo  address, role 값을 획득
+
     }
 }

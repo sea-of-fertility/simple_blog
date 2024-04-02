@@ -16,6 +16,4 @@ public class MemberDetail extends User {
         super(member.getAddress(), member.getPassword(), List.of(new SimpleGrantedAuthority(member.getRole())));
         this.memberId = member.getId();
     }
-
-
 }
