@@ -27,6 +27,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import static com.example.simple_blog.config.properties.TokenProperties.ACCESS_TOKEN_NAME;
+import static com.example.simple_blog.config.properties.TokenProperties.REFRESH_TOKEN_NAME;
+
 
 @Slf4j
 public class LoginFilter extends AbstractAuthenticationProcessingFilter{
@@ -37,6 +40,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
     private final ObjectMapper objectMapper;
     private final TokenProperties tokenProperties;
     private final RefreshTokenService refreshTokenService;
+
 
     @Builder
     public LoginFilter(String defaultFilterProcessesUrl, String defaultFilterProcessesUrl1, JwtUtil jwtUtil,
@@ -79,15 +83,15 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtUtil.createJwt("access", address, role,
+        String access = jwtUtil.createJwt(ACCESS_TOKEN_NAME, address, role,
                 tokenProperties.getAccessTokenExpirationMinutes());
-        String refresh = jwtUtil.createJwt("refresh", address, role,
+        String refresh = jwtUtil.createJwt(REFRESH_TOKEN_NAME, address, role,
                 tokenProperties.getRefreshTokenExpirationDays());
 
         addRefresh(address, refresh, tokenProperties.getRefreshTokenExpirationDays());
 
-        response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.setHeader(ACCESS_TOKEN_NAME, access);
+        response.addCookie(createCookie(REFRESH_TOKEN_NAME, refresh));
         response.setStatus(HttpStatus.OK.value());
     }
 
