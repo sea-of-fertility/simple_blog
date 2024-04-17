@@ -9,17 +9,22 @@ import com.example.simple_blog.repository.MemberRepository;
 import com.example.simple_blog.service.member.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 
 @SpringBootTest
 class MemberServiceTest {
 
     private String testPassword = "a12345678@";
+    private String testChangePassword = "new145678@";
+
 
     @Autowired
     private MemberService memberService;
@@ -31,7 +36,12 @@ class MemberServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @AfterEach
-    public void setMemberRepository() {
+    public void setMemberRepository2() {
+        memberRepository.deleteAll();
+    }
+
+    @BeforeEach
+    public void setMemberRepository1() {
         memberRepository.deleteAll();
     }
 
@@ -177,11 +187,11 @@ class MemberServiceTest {
                 .build();
         memberService.save(nick);
 
-
         //when
-        memberService.passwordChange(nick, "ChangePWD+1");
+        memberService.passwordChange(nick, testChangePassword);
+        Member member = memberRepository.findById(nick.getId()).get();
 
-
-
+        Assertions.assertThat(passwordEncoder.matches(testChangePassword, member.getPassword())).isEqualTo(true);
+        Assertions.assertThat(memberRepository.findAll().size()).isEqualTo(1);
     }
 }

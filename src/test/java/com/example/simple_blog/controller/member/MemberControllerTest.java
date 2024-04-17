@@ -84,8 +84,8 @@ class MemberControllerTest {
                 .build();
 
         memberService.save(nick);
-
-
     }
+
+
 
 }

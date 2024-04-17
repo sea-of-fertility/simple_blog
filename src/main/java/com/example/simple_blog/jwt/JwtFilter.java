@@ -1,11 +1,17 @@
 package com.example.simple_blog.jwt;
 
+import com.example.simple_blog.config.MemberDetail;
+import com.example.simple_blog.config.MemberDetailService;
+import com.example.simple_blog.domain.member.Member;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -48,7 +54,18 @@ public class JwtFilter extends OncePerRequestFilter {
         String address = jwtUtil.getAddress(accessToken);
         String role = jwtUtil.getRole(accessToken);
 
-        //todo  address, role 값을 획득
+        Member build = Member.builder()
+                .address(address)
+                .role(role)
+                .build();
+
+        MemberDetail memberDetail = new MemberDetail(build);
+
+        Authentication authToken = new UsernamePasswordAuthenticationToken(memberDetail,
+                null, memberDetail.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+        filterChain.doFilter(request, response);
 
     }
 }

@@ -15,10 +15,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberService memberService;
 
-
     public void post(Long memberId, Post post) throws MemberNotFoundException {
-
-
         postRepository.save(post);
     }
 }

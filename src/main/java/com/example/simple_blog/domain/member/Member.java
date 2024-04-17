@@ -3,6 +3,7 @@ package com.example.simple_blog.domain.member;
 
 import com.example.simple_blog.domain.post.Post;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,8 +45,9 @@ public class Member {
         this.password = encodedPassword;
     }
 
-    public void passwordChange(String newPassword) {
+    public Member passwordChange(String newPassword) {
         this.password = newPassword;
+        return this;
     }
 
     @Builder

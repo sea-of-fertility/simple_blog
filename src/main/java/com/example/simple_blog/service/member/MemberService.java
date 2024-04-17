@@ -5,6 +5,7 @@ import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.join.*;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,13 +41,15 @@ public class MemberService {
         }
             }
 
+    @Transactional
     public void passwordChange(Member member, String newPassword) {
         if (!JoinValidator.isValidPassword(newPassword))
             throw new InvalidPasswordException();
 
         String encode = passwordEncoder.encode(newPassword);
         log.info("{}", encode);
-        member.passwordChange(encode);
+        Member member1 = member.passwordChange(encode);
+        memberRepository.save(member1);
     }
 
     public void checkJoin(Member member) {
