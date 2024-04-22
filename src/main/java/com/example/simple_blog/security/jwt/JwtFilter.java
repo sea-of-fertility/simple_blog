@@ -1,6 +1,6 @@
 package com.example.simple_blog.security.jwt;
 
-import com.example.simple_blog.config.MemberDetail;
+import com.example.simple_blog.security.MemberDetail;
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.token.AccessTokenExpiredException;
 import com.example.simple_blog.exception.token.AccessTokenInvalidException;
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import static com.example.simple_blog.config.properties.TokenProperties.ACCESS_TOKEN_NAME;
 

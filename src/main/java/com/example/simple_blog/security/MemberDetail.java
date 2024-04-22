@@ -1,4 +1,4 @@
-package com.example.simple_blog.config;
+package com.example.simple_blog.security;
 
 import com.example.simple_blog.domain.member.Member;
 import lombok.Getter;

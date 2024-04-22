@@ -1,8 +1,9 @@
-package com.example.simple_blog.config;
+package com.example.simple_blog.config.security;
 
 import com.example.simple_blog.config.filter.LoginFilter;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.member.Member;
+import com.example.simple_blog.security.MemberDetail;
 import com.example.simple_blog.security.jwt.JwtFilter;
 import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.repository.MemberRepository;
@@ -62,8 +63,10 @@ public class SecurityConfig {
                 securityMatcher("/**")
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/join", "/", "/logout").permitAll()
-                        .requestMatchers("/admin", "/myPage").hasAnyRole("ADMIN", "USER")
-                        .anyRequest().permitAll());
+                        .requestMatchers("/mpage").hasRole("USER")
+                        .requestMatchers("/member").hasRole("USER")
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .anyRequest().authenticated());
 
         http
                 .addFilterAt(LoginFilter.builder()
