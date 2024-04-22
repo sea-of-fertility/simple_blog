@@ -1,8 +1,9 @@
-package com.example.simple_blog.jwt;
+package com.example.simple_blog.security.jwt;
 
 import com.example.simple_blog.config.MemberDetail;
-import com.example.simple_blog.config.MemberDetailService;
 import com.example.simple_blog.domain.member.Member;
+import com.example.simple_blog.exception.token.AccessTokenExpiredException;
+import com.example.simple_blog.exception.token.AccessTokenInvalidException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,18 +38,12 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new AccessTokenExpiredException();
         }
 
         String category = jwtUtil.getCategory(accessToken);
         if (!category.equals(ACCESS_TOKEN_NAME)) {
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new AccessTokenInvalidException();
         }
 
         String address = jwtUtil.getAddress(accessToken);
@@ -66,6 +61,5 @@ public class JwtFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
-
     }
 }

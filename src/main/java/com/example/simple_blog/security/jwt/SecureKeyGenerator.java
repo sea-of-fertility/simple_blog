@@ -1,4 +1,4 @@
-package com.example.simple_blog.jwt;
+package com.example.simple_blog.security.jwt;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

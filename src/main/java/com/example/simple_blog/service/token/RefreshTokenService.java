@@ -4,7 +4,7 @@ package com.example.simple_blog.service.token;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.Refresh;
 import com.example.simple_blog.exception.token.RefreshTokenNotFoundException;
-import com.example.simple_blog.jwt.JwtUtil;
+import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.reponse.NewToken;
 import com.example.simple_blog.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;

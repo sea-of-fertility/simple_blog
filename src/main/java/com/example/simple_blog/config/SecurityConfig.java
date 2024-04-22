@@ -3,8 +3,8 @@ package com.example.simple_blog.config;
 import com.example.simple_blog.config.filter.LoginFilter;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.jwt.JwtFilter;
-import com.example.simple_blog.jwt.JwtUtil;
+import com.example.simple_blog.security.jwt.JwtFilter;
+import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.repository.MemberRepository;
 import com.example.simple_blog.service.token.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,9 +59,9 @@ public class SecurityConfig {
                 .sessionManagement((auth) -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.
-                securityMatcher("/login")
+                securityMatcher("/**")
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/join", "/").permitAll()
+                        .requestMatchers("/join", "/", "/logout").permitAll()
                         .requestMatchers("/admin", "/myPage").hasAnyRole("ADMIN", "USER")
                         .anyRequest().permitAll());
 
