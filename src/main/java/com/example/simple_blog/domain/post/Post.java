@@ -30,8 +30,9 @@ public class Post {
     @NotEmpty
     private String content;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FilePath> imagePath = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "File_Path_Id")
+    private final List<FilePath> imagePaths = new ArrayList<>();
 
     @Temporal(value = TemporalType.TIME)
     @Column(nullable = false)
@@ -41,10 +42,13 @@ public class Post {
     @JoinColumn(nullable = false)
     private Member member;
 
+    public void saveFilePath(FilePath filePath) {
+        imagePaths.add(filePath);
+    }
+
     @Builder
-    public Post(String title, List<FilePath> imagePath, String content, Member member) {
+    public Post(String title, String content, Member member) {
         this.title = title;
-        this.imagePath = imagePath;
         this.content = content;
         this.member = member;
     }
