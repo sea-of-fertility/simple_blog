@@ -2,11 +2,8 @@ package com.example.simple_blog.config.security;
 
 import com.example.simple_blog.config.filter.LoginFilter;
 import com.example.simple_blog.config.properties.TokenProperties;
-import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.security.MemberDetail;
 import com.example.simple_blog.security.jwt.JwtFilter;
 import com.example.simple_blog.security.jwt.JwtUtil;
-import com.example.simple_blog.repository.MemberRepository;
 import com.example.simple_blog.service.token.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -62,17 +57,18 @@ public class SecurityConfig {
         http.
                 securityMatcher("/**")
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/join", "/", "/logout").permitAll()
-                        .requestMatchers("/mpage").hasRole("USER")
+                        .requestMatchers("/chat-blog/join", "/chat-blog/", "/logout", "/chat-blog/login").permitAll()
+                        .requestMatchers("/mypage").hasRole("USER")
                         .requestMatchers("/member").hasRole("USER")
                         .requestMatchers("/admin").hasRole("ADMIN")
-                        .anyRequest().authenticated());
+                        .anyRequest().fullyAuthenticated());
 
         http
                 .addFilterAt(LoginFilter.builder()
                         .defaultFilterProcessesUrl(defaultUrl)
                         .objectMapper(objectMapper)
                         .jwtUtil(jwtUtil)
+
                         .authenticationManager(authenticationManager(authenticationConfiguration))
                         .refreshTokenService(refreshTokenService)
                         .tokenProperties(tokenProperties)
@@ -92,13 +88,4 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(MemberRepository memberRepository) {
-        return username -> {
-            Member user = memberRepository.
-                    findByAddress(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Can't find " + username));
-            return new MemberDetail(user);
-        };
-    }
 }
