@@ -1,18 +1,21 @@
 package com.example.simple_blog.exception.storage;
 
-public class StorageException extends RuntimeException{
+public  class StorageException extends FileException{
 
-    private final static String MESSAGE = "Failed to store empty file.";
+    @Override
+    public int statusCode() {
+        return 404;
+    }
 
     public StorageException() {
-        super(MESSAGE);
+        super();
     }
 
     public StorageException(String message) {
         super(message);
     }
 
-    public StorageException(Throwable cause) {
-        super(MESSAGE,cause);
+    public StorageException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

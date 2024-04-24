@@ -1,14 +1,13 @@
 package com.example.simple_blog.domain.post;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FilePath {
 
@@ -17,8 +16,15 @@ public class FilePath {
 
     private String filePath;
 
+    private String fileType;
+
+    private String uuid;
+
+
     @Builder
-    public FilePath(String filePath) {
+    public FilePath(String filePath, String fileType, String uuid) {
         this.filePath = filePath;
+        this.fileType = fileType;
+        this.uuid = uuid;
     }
 }
