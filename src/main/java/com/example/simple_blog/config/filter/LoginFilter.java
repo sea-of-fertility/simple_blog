@@ -43,7 +43,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
 
 
     @Builder
-    public LoginFilter(String defaultFilterProcessesUrl, String defaultFilterProcessesUrl1, JwtUtil jwtUtil,
+    public LoginFilter(String defaultFilterProcessesUrl, JwtUtil jwtUtil,
                        AuthenticationManager authenticationManager, ObjectMapper objectMapper, TokenProperties tokenProperties,
                        RefreshTokenService refreshTokenService) {
         super(defaultFilterProcessesUrl);
@@ -64,7 +64,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
                         loginJson.getPassword());
 
         // Allow subclasses to set the "details" property
-        setDetails(request, authRequest);
+        this.setDetails(request, authRequest);
 
         return this.authenticationManager.authenticate(authRequest);
     }

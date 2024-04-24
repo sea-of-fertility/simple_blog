@@ -6,13 +6,10 @@ spring:
     username: bloguser
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 login:
-  url: /login
-
-jwt:
-  secret:
+  url: /chat-blog/login
 
 front:
   url: ??

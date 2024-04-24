@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,7 +22,8 @@ class SecurityConfigTest {
     @WithMockUser(authorities = "ROLE_ADMIN")
     @Test
     public void adminPage() throws Exception {
-        this.mockMvc.perform(get("/admin"))
+        this.mockMvc.perform(get("/chat-blog/admin"))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
 
@@ -29,7 +31,8 @@ class SecurityConfigTest {
     @WithMockUser(authorities = "ROLE_ADMIN")
     @Test
     public void memberPage() throws Exception {
-        this.mockMvc.perform(get("/member"))
+        this.mockMvc.perform(get("/chat-blog/"))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
 

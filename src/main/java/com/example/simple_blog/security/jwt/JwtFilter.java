@@ -48,15 +48,14 @@ public class JwtFilter extends OncePerRequestFilter {
         String address = jwtUtil.getAddress(accessToken);
         String role = jwtUtil.getRole(accessToken);
 
-        Member build = Member.builder()
+        MemberDetail build = MemberDetail.builder()
                 .address(address)
                 .role(role)
                 .build();
 
-        MemberDetail memberDetail = new MemberDetail(build);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(memberDetail,
-                null, memberDetail.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(build,
+                null,
+                build.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);

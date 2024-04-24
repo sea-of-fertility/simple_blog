@@ -21,6 +21,10 @@ public class MemberDetailService implements UserDetailsService {
         Member member = memberRepository.findByAddress(address)
                 .orElseThrow(AddressNotFoundException::new);
 
-        return new MemberDetail(member);
+        return MemberDetail.builder()
+                .address(member.getAddress())
+                .password(member.getPassword())
+                .role(member.getRole())
+                .build();
     }
 }
