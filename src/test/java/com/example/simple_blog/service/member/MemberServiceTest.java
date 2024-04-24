@@ -186,12 +186,14 @@ class MemberServiceTest {
                 .password(testPassword)
                 .build();
         memberService.save(nick);
-
+        String before = nick.getPassword();
         //when
-        memberService.passwordChange(nick, testChangePassword);
+        memberService.passwordChange(nick, testPassword, testChangePassword);
         Member member = memberRepository.findById(nick.getId()).get();
 
+
+        String after = nick.getPassword();
         Assertions.assertThat(passwordEncoder.matches(testChangePassword, member.getPassword())).isEqualTo(true);
-        Assertions.assertThat(memberRepository.findAll().size()).isEqualTo(1);
+        Assertions.assertThat(after).isNotEqualTo(before);
     }
 }
