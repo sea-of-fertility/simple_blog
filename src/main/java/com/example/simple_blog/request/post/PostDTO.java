@@ -1,17 +1,20 @@
 package com.example.simple_blog.request.post;
 
 
+import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Post;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class PostDTO {
 
     @NotBlank
-    private final String title;
+    private String title;
 
     @NotBlank
-    private final String content;
+    private String content;
 
 
     @Builder
@@ -20,6 +23,12 @@ public class PostDTO {
         this.content = content;
     }
 
-
+    public Post toEntity(Member member) {
+        return Post.builder()
+                .title(this.title)
+                .content(this.content)
+                .member(member)
+                .build();
+    }
 
 }
