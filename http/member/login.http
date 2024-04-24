@@ -1,7 +1,7 @@
-POST http://localhost:8080/login
+POST http://localhost:8080/chat-blog/login
 Content-Type: application/json
 
 {
-  "address" : "hllodfdfd@gmail.com",
+  "address" : "hllos@gmail.com",
   "password" : "a12345678@"
 }

@@ -25,12 +25,15 @@ public class MemberService {
         return memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 
+
+    public Member findByAddress(String address) throws MemberNotFoundException {
+        return memberRepository.findByAddress(address).orElseThrow(MemberNotFoundException::new);
+    }
+
     public Member save(Member member) {
 
         try {
-            log.info("checkJoin 전{}", member.getPassword());
             checkJoin(member);
-            log.info("checkJoin 후{}", member.getPassword());
             String encode = passwordEncoder.encode(member.getPassword());
             member.passwordEncode(encode);
             return memberRepository.save(member);
@@ -42,11 +45,15 @@ public class MemberService {
             }
 
     @Transactional
-    public void passwordChange(Member member, String newPassword) {
-        if (!JoinValidator.isValidPassword(newPassword))
+    public void passwordChange(Member member, String beforePWD, String afterPWD) {
+        if (!passwordEncoder.matches(beforePWD, member.getPassword())){
+            throw new InvalidPasswordException("현재 비밀번호를 잘못 입력하셨습니다.");
+        }
+
+        if (!JoinValidator.isValidPassword(afterPWD))
             throw new InvalidPasswordException();
 
-        String encode = passwordEncoder.encode(newPassword);
+        String encode = passwordEncoder.encode(afterPWD);
         log.info("{}", encode);
         Member member1 = member.passwordChange(encode);
         memberRepository.save(member1);

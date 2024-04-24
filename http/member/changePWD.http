@@ -1,0 +1,8 @@
+POST http://localhost:8080/chat-blog/changed/pwd
+Content-Type: application/json
+access: eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsImFkZHJlc3MiOiJobGxvc0BnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzEzOTY3MDE4LCJleHAiOjE3MTM5NzA2MTh9.FAvm0TLFY6IZ9PoiYi_VC6wR52HFyxo5eNQzt3wnXcM
+
+{
+  "beforePassword" : "new1234@",
+  "afterPassword" : "@1213eee"
+}
