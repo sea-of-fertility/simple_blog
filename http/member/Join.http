@@ -2,8 +2,8 @@ POST http://localhost:8080/chat-blog/join
 Content-Type: application/json
 
 {
-"address" : "hllodfdfd@gmail.com",
-"memberNickName" : "nick",
+"address" : "hllos@gmail.com",
+"memberNickName" : "nickdd",
 "memberName" : "park",
 "password" : "a12345678@"
 }
