@@ -2,6 +2,6 @@ POST http://localhost:8080/chat-blog/login
 Content-Type: application/json
 
 {
-  "address" : "hllos@gmail.com",
+  "address" : "hello@gmail.com",
   "password" : "a12345678@"
 }
