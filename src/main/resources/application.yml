@@ -1,12 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:mariadb://localhost:3306/simpleblog
-    driver-class-name: org.mariadb.jdbc.Driver
-    password: '0000'
-    username: bloguser
-  jpa:
-    hibernate:
-      ddl-auto: update
+  profiles:
+    active: database
 
 login:
   url: /chat-blog/login
