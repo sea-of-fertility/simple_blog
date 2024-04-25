@@ -45,14 +45,16 @@ public class PostController {
 
         Post post = postDTO.toEntity(member);
 
-        multipartFiles.forEach((m -> {
-            FilePath store = storageService.store(m, address);
-            post.saveFilePath(store);
-        }));
+        if(multipartFiles != null){
+            multipartFiles.forEach((m -> {
+                FilePath store = storageService.store(m, address);
+                post.saveFilePath(store);
+            }));
+        }
 
         postService.save(member.getId(), post);
-
     }
+
 
 
 }
