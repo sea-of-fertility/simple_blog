@@ -5,7 +5,7 @@ import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.Refresh;
 import com.example.simple_blog.exception.token.RefreshTokenNotFoundException;
 import com.example.simple_blog.security.jwt.JwtUtil;
-import com.example.simple_blog.reponse.NewToken;
+import com.example.simple_blog.response.NewToken;
 import com.example.simple_blog.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -102,7 +102,10 @@ public class RefreshTokenService {
 
 
     public void save(Refresh refresh) {
-        refreshRepository.save(refresh);
+
+        String userAddress = refresh.getUserAddress();
+        if(!refreshRepository.existsByUserAddress(userAddress))
+            refreshRepository.save(refresh);
     }
 
 
