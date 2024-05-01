@@ -1,6 +1,6 @@
 package com.example.simple_blog.repository;
 
-import com.example.simple_blog.domain.Refresh;
+import com.example.simple_blog.domain.token.Refresh;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
