@@ -3,20 +3,24 @@ package com.example.simple_blog.controller.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
-import com.example.simple_blog.request.member.ChangePWDDto;
 import com.example.simple_blog.request.member.JoinDto;
+import com.example.simple_blog.request.member.NewPwdDTO;
+import com.example.simple_blog.response.member.MemberResponse;
 import com.example.simple_blog.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.net.ContentHandler;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/chat-blog")
@@ -32,14 +36,23 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public void MemberJoin(@RequestBody @Validated JoinDto joinDto) {
+    public HttpEntity<MemberResponse> memberJoin(@RequestBody @Validated JoinDto joinDto) {
+
         Member member = joinDto.toEntity();
         Member save = memberService.save(member);
+
+        MemberResponse memberResponse = MemberResponse.builder()
+                .address(save.getAddress())
+                .memberNickName(save.getMemberNickName())
+                .build();
+
+        memberResponse.add(linkTo(methodOn(MemberController.class).memberJoin(joinDto)).withSelfRel());
+        return new ResponseEntity<>(memberResponse, HttpStatus.CREATED);
     }
 
-    @PostMapping("/changed/pwd")
+    @PatchMapping("/changed/pwd")
     @PreAuthorize("hasRole('USER')")
-    public void ChangePWD(@AuthenticationPrincipal UserDetails userDetails, @RequestBody  ChangePWDDto changePWDDto) throws MemberNotFoundException {
+    public HttpEntity<Void> ChangePWD(@AuthenticationPrincipal UserDetails userDetails, @RequestBody NewPwdDTO changePWDDto) throws MemberNotFoundException {
         String address = userDetails.getUsername();
 
         Member member = memberService.findByAddress(address);
@@ -49,6 +62,8 @@ public class MemberController {
         log.info("getAfterPassword() {}",changePWDDto.getAfterPassword());
 
         memberService.passwordChange(member, changePWDDto.getBeforePassword(), changePWDDto.getAfterPassword());
+
+        return  ResponseEntity.ok().build();
     }
 
 
