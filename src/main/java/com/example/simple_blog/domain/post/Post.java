@@ -50,4 +50,10 @@ public class Post {
         this.content = content;
         this.member = member;
     }
+
+
+    public void edit(Post post) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+    }
 }
