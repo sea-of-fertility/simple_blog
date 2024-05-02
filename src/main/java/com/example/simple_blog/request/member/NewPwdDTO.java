@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChangePWDDto {
+public class NewPwdDTO {
 
     private String beforePassword;
     private String afterPassword;
 
     @Builder
-    public ChangePWDDto(String beforePassword, String afterPassword) {
+    public NewPwdDTO(String beforePassword, String afterPassword) {
         this.beforePassword = beforePassword;
         this.afterPassword = afterPassword;
     }
