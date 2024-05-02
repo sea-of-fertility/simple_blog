@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,21 +30,19 @@ public class Post {
     @NotEmpty
     private String content;
 
-    @OneToMany
-    @JoinColumn(name = "File_Path_Id")
-    private final List<FilePath> imagePaths = new ArrayList<>();
-
-    @Temporal(value = TemporalType.TIME)
+    @Temporal(value = TemporalType.DATE)
     @Column(nullable = false)
-    private final LocalTime createTime = LocalTime.now();
+    private final LocalDate createTime = LocalDate.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Member member;
 
-    public void saveFilePath(FilePath filePath) {
-        imagePaths.add(filePath);
-    }
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<FilePath> filePaths = new ArrayList<>();
+
+
+//    private AtomicLong likeCount = new AtomicLong();
 
     @Builder
     public Post(String title, String content, Member member) {

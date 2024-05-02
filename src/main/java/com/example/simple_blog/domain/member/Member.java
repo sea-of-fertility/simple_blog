@@ -34,6 +34,7 @@ public class Member {
     private String password;
 
     @Temporal(value = TemporalType.DATE)
+    @Column(nullable = false)
     private final LocalDate joinTime = LocalDate.now();
 
     private String role;
@@ -57,7 +58,7 @@ public class Member {
         this.memberName = memberName;
         this.password = password;
         this.role = role != null? role: "ROLE_USER";
-        this.posts = posts;
+        this.posts = posts != null ? posts: new ArrayList<>();
     }
 
 }

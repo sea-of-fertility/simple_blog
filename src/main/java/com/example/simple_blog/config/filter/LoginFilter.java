@@ -1,7 +1,7 @@
 package com.example.simple_blog.config.filter;
 
 import com.example.simple_blog.config.properties.TokenProperties;
-import com.example.simple_blog.domain.Refresh;
+import com.example.simple_blog.domain.token.Refresh;
 import com.example.simple_blog.exception.member.login.LoginFailedException;
 import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.service.token.RefreshTokenService;
