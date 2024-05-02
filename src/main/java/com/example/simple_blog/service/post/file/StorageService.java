@@ -1,6 +1,7 @@
 package com.example.simple_blog.service.post.file;
 
 import com.example.simple_blog.domain.post.FilePath;
+import com.example.simple_blog.domain.post.Post;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,7 +11,7 @@ import java.util.stream.Stream;
 public interface StorageService {
     void init();
 
-    FilePath store(MultipartFile file, String  address);
+    FilePath store(MultipartFile file, String  address, Post post);
 
     Stream<Path> loadAll();
 

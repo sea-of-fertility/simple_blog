@@ -3,6 +3,7 @@ package com.example.simple_blog.service.post.file;
 
 import com.example.simple_blog.config.properties.StorageProperties;
 import com.example.simple_blog.domain.post.FilePath;
+import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.storage.StorageException;
 import com.example.simple_blog.exception.storage.StorageFileNotFoundException;
 import com.example.simple_blog.repository.FileRepository;
@@ -49,21 +50,21 @@ public class FileSystemStorageService implements  StorageService{
     }
 
     @Override
-    public FilePath store(MultipartFile file, String address) {
-
+    public FilePath store(MultipartFile file, String address, Post post) {
+        log.info("StorageService.store {}", file.getName());
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file.");
         }
 
         Path memberDir = this.rootLocation.resolve(address);
-        init(memberDir);
+        this.init(memberDir);
         String uuid = UUID.randomUUID().toString();
-
+        String fileExtension = fileExtensionExtractor(file.getOriginalFilename());
         Path destinationFile = memberDir.resolve(
-                        Paths.get(Objects.requireNonNull(uuid)))
+                        Paths.get(uuid + "." +fileExtension))
                 .normalize().toAbsolutePath();
 
-        String fileExtension = fileExtensionExtractor(file.getOriginalFilename());
+
 
         if (!destinationFile.getParent().equals(memberDir.toAbsolutePath())) {
             // This is a security check
@@ -80,6 +81,7 @@ public class FileSystemStorageService implements  StorageService{
                 .fileType(fileExtension)
                 .uuid(uuid)
                 .filePath(String.valueOf(destinationFile))
+                .post(post)
                 .build();
 
         return fileRepository.save(saveFile);
