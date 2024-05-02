@@ -1,12 +1,11 @@
 package com.example.simple_blog.service.member;
 
 import com.example.simple_blog.domain.member.Member;
+import com.example.simple_blog.exception.member.MemberException;
 import com.example.simple_blog.exception.member.join.DuplicateNickName;
 import com.example.simple_blog.exception.member.join.DuplicatedAddress;
-import com.example.simple_blog.exception.member.MemberException;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.MemberRepository;
-import com.example.simple_blog.service.member.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
 
 
 @SpringBootTest
