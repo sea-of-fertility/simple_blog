@@ -1,26 +1,36 @@
 package com.example.simple_blog.controller.post;
 
-
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
+import com.example.simple_blog.exception.post.UnauthorizedDeletionException;
 import com.example.simple_blog.request.post.PostDTO;
+import com.example.simple_blog.response.post.GetPostsResponse;
+import com.example.simple_blog.response.post.GetResponse;
+import com.example.simple_blog.response.post.PostResponse;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.PostService;
-import com.example.simple_blog.service.post.file.StorageService;
+import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/chat-blog")
@@ -29,32 +39,97 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final StorageService storageService;
+    private final FileSystemStorageService storageService;
     private final MemberService memberService;
 
-    @PostMapping("/post")
+    @PostMapping("/user/post")
     @PreAuthorize("hasRole('USER')")
-    public void post(@AuthenticationPrincipal UserDetails userDetails,@RequestPart PostDTO postDTO, @RequestPart(required = false) List<MultipartFile> multipartFiles) throws MemberNotFoundException {
+    public ResponseEntity<PostResponse> post(@AuthenticationPrincipal UserDetails userDetails,
+                                             @RequestPart PostDTO postDTO,
+                                             @RequestPart(required = false) List<MultipartFile> multipartFiles)
+            throws MemberNotFoundException {
 
         String address = userDetails.getUsername();
-        log.info("getUserName{}", userDetails.getUsername());
-        log.info("getUser password{}", userDetails.getPassword());
-        log.info("getUser authorities{}", userDetails.getAuthorities());
 
         Member member = memberService.findByAddress(address);
 
         Post post = postDTO.toEntity(member);
+        postService.save(post);
+
+        PostResponse postResponse = PostResponse
+                .builder().postDTO(postDTO)
+                .author(userDetails.getUsername())
+                .build();
 
         if(multipartFiles != null){
+            log.info("path {}", multipartFiles.size());
             multipartFiles.forEach((m -> {
-                FilePath store = storageService.store(m, address);
-                post.saveFilePath(store);
+                if (!m.isEmpty()) {
+                    FilePath store = storageService.store(m, address, post);
+                    postResponse.setPaths(store.getFilePath());
+                    log.info("path {}", store.getFilePath());
+                }
             }));
         }
 
-        postService.save(member.getId(), post);
+        postResponse.add(linkTo(methodOn(PostController.class).post(userDetails, postDTO, multipartFiles)).withSelfRel());
+        return new ResponseEntity<>(postResponse, HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/user/{postId}")
+    @PreAuthorize("hasRole('USER')")
+    public HttpEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
+        Post post = postService.get(postId);
+        if (userDetails.getUsername().equals(post.getMember().getAddress())) {
+            postService.delete(postId);
+            storageService.delete(post);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            throw new UnauthorizedDeletionException();
+        }
+
+    }
+
+
+    @GetMapping("/public/{memberId}/{postId}")
+    public HttpEntity<GetResponse> getOnePost(@PathVariable("memberId") Long memberId, @PathVariable("postId") Long postId) throws MemberNotFoundException {
+        Member byMemberId = memberService.findByMemberId(memberId);
+        Post post = postService.findById(postId);
+        List<String> load = storageService.load(post.getId());
+        GetResponse getResponse = GetResponse.builder()
+                .author(byMemberId.getAddress())
+                .post(post)
+                .paths(load)
+                .build();
+
+
+            log.info("file path {}",load);
+
+
+        getResponse.add(linkTo(methodOn(PostController.class).getOnePost(memberId, postId)).withSelfRel());
+
+        return new ResponseEntity<>(getResponse, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/public/{memberId}")
+    public HttpEntity<GetPostsResponse> getAllPosts(@PathVariable Long memberId,
+                                                 @PageableDefault(size = 5, page = 0, sort = "id", direction = Sort.Direction.DESC)
+                                                 Pageable pageable) throws MemberNotFoundException {
+
+        Member byMemberId = memberService.findByMemberId(memberId);
+
+        Page<Post> posts = postService.getPosts(pageable);
+
+        GetPostsResponse getPostsResponse = new GetPostsResponse();
+
+
+        for (Post post : posts) {
+            getPostsResponse.add(post);
+        }
+
+        return new ResponseEntity<>(getPostsResponse, HttpStatus.OK);
+    }
 
 
 }

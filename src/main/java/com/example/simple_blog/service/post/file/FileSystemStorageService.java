@@ -2,71 +2,64 @@ package com.example.simple_blog.service.post.file;
 
 
 import com.example.simple_blog.config.properties.StorageProperties;
+import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.storage.StorageException;
-import com.example.simple_blog.exception.storage.StorageFileNotFoundException;
-import com.example.simple_blog.repository.FileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class FileSystemStorageService implements  StorageService{
+public class FileSystemStorageService   {
 
-
+    private final FileService fileService;
     private final Path rootLocation;
-    private final FileRepository fileRepository;
 
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties, FileRepository fileRepository) {
+    public FileSystemStorageService(FileService fileService, StorageProperties properties) {
 
         if(properties.getLocation().trim().isEmpty()){
             throw new StorageException("File upload location can not be Empty.");
         }
-
+        this.fileService = fileService;
         this.rootLocation = Paths.get(properties.getLocation());
-        this.fileRepository = fileRepository;
 
     }
 
-    @Override
     public FilePath store(MultipartFile file, String address, Post post) {
         log.info("StorageService.store {}", file.getName());
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file.");
         }
 
-        Path memberDir = this.rootLocation.resolve(address);
-        this.init(memberDir);
+        Path postDir = this.rootLocation.resolve(address).resolve(String.valueOf(post.getId()));
+        this.init(postDir);
         String uuid = UUID.randomUUID().toString();
         String fileExtension = fileExtensionExtractor(file.getOriginalFilename());
-        Path destinationFile = memberDir.resolve(
+        Path destinationFile = postDir.resolve(
                         Paths.get(uuid + "." +fileExtension))
                 .normalize().toAbsolutePath();
 
 
 
-        if (!destinationFile.getParent().equals(memberDir.toAbsolutePath())) {
+        if (!destinationFile.getParent().equals(postDir.toAbsolutePath())) {
             // This is a security check
             throw new StorageException(
                     "Cannot store file outside current directory.");
@@ -84,54 +77,37 @@ public class FileSystemStorageService implements  StorageService{
                 .post(post)
                 .build();
 
-        return fileRepository.save(saveFile);
+        return fileService.save(saveFile);
+    }
+
+
+    public List<String> load(Long postId) {
+        if (fileService.existsByPostId(postId)) {
+            List<FilePath> byPostId = fileService.findByPostId(postId);
+
+            log.info("fileSystemStorage load{}", byPostId);
+            return byPostId.stream()
+                    .map(FilePath::getFilePath)
+                    .toList();
+        }
+        return new ArrayList<>();
+    }
+
+    public void delete(Post post) {
+        log.info("storageService delete start");
+
+        Member member = post.getMember();
+        Path postDir = this.rootLocation.resolve(member.getAddress()).resolve(String.valueOf(post.getId()));
+        FileSystemUtils.deleteRecursively(postDir.toFile());
 
 
     }
 
-    @Override
-    public Stream<Path> loadAll() {
-        try {
-            return Files.walk(this.rootLocation, 1)
-                    .filter(path -> !path.equals(this.rootLocation))
-                    .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
-            throw new StorageException("Failed to read stored files", e);
-        }
-
-    }
-
-    @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
-    }
-
-    @Override
-    public Resource loadAsResource(String filename) {
-        try {
-            Path file = load(filename);
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            }
-            else {
-                throw new StorageFileNotFoundException(
-                        "Could not read file: " + filename);
-
-            }
-        }
-        catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
-        }
-    }
-
-    @Override
-    public void deleteAll() {
+    public void deleteAll()
+    {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
-    @Override
     public void init() {
         try {
             Files.createDirectories(rootLocation);
