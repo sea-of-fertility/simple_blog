@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 @SpringBootTest
@@ -30,7 +31,8 @@ class FileSystemStorageServiceTest {
     private String testAddress = "hello@naver.com";
 
     @Autowired
-    StorageService storageService;
+    FileSystemStorageService storageService;
+
 
     @Autowired
     StorageProperties storageProperties;
@@ -41,6 +43,7 @@ class FileSystemStorageServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+
     @Autowired
     PostRepository postRepository;
 
@@ -50,11 +53,8 @@ class FileSystemStorageServiceTest {
 
     @AfterEach
     void setDirectory() {
-//        Path path = Paths.get(storageProperties.getLocation());
-//        path = path.resolve(testEmail);
-//        File file = new File(String.valueOf(path));
-//        Arrays.stream(Objects.requireNonNull(file.listFiles())).forEach(File::delete);
         storageService.deleteAll();
+
         postRepository.deleteAll();
         memberRepository.deleteAll();
         fileRepository.deleteAll();
@@ -92,7 +92,7 @@ class FileSystemStorageServiceTest {
         storageService.store(multipartFile, testEmail, post);
 
         Path path = Paths.get(storageProperties.getLocation());
-        path = path.resolve(testEmail);
+        path = path.resolve(testEmail).resolve(String.valueOf(post.getId()));
         File file = new File(String.valueOf(path));
         File[] files = file.listFiles();
 
@@ -101,5 +101,29 @@ class FileSystemStorageServiceTest {
 
     }
 
+    @Test
+    @DisplayName("게시글 하나 삭제하기")
+    void deletePost() throws Exception {
+        Member member = memberRepository.findByAddress(testAddress).get();
 
+        Post post = Post.builder()
+                .title(exampleTitle)
+                .content(exampleContent)
+                .member(member)
+                .build();
+
+        postRepository.save(post);
+
+        //given
+        storageService.store(multipartFile, testEmail, post);
+
+        //when
+        postRepository.deleteById(post.getId());
+        storageService.delete(post);
+
+
+        //then
+        Assertions.assertThat(0L).isEqualTo(postRepository.count());
+        Assertions.assertThat(0L).isEqualTo(fileRepository.count());
+    }
 }

@@ -2,11 +2,11 @@ package com.example.simple_blog.controller.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.repository.MemberRepository;
-import com.example.simple_blog.request.member.ChangePWDDto;
+import com.example.simple_blog.request.member.NewPwdDTO;
 import com.example.simple_blog.request.member.JoinDto;
 import com.example.simple_blog.service.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ class MemberControllerTest {
     private String testChangePassword = "new145678@";
     final String userAddress = "hello@gmail.com";
 
-    @BeforeEach
+    @AfterEach
     public void setMemberRepository() {
         memberRepository.deleteAll();
     }
@@ -54,7 +54,7 @@ class MemberControllerTest {
         //given
         JoinDto nick = JoinDto.builder()
                 .address("hello@naver.com")
-                .memberNickName("nick")
+                .memberNickName("nickaa")
                 .memberName("hello")
                 .password(testPassword)
                 .build();
@@ -68,7 +68,7 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -85,14 +85,14 @@ class MemberControllerTest {
                 .build();
         memberService.save(build);
 
-        ChangePWDDto build1 = ChangePWDDto.builder()
+        NewPwdDTO build1 = NewPwdDTO.builder()
                 .beforePassword(testPassword)
                 .afterPassword(testChangePassword)
                 .build();
 
         String s = objectMapper.writeValueAsString(build1);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/chat-blog/changed/pwd")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/chat-blog/changed/pwd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(s))
                 .andDo(print())

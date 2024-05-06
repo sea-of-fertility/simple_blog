@@ -1,12 +1,11 @@
 package com.example.simple_blog.service.post;
 
 import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.repository.FileRepository;
 import com.example.simple_blog.repository.MemberRepository;
 import com.example.simple_blog.repository.PostRepository;
-import com.example.simple_blog.service.post.file.StorageService;
+import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import jakarta.validation.ConstraintViolationException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +27,7 @@ class PostServiceTest {
     PostService postService;
 
     @Autowired
-    StorageService storageService;
+    FileSystemStorageService storageService;
 
     @Autowired
     PostRepository postRepository;
@@ -44,7 +43,7 @@ class PostServiceTest {
 
 
     @AfterEach
-    public void setRepository() {
+    void setRepository() {
         postRepository.deleteAll();
         memberRepository.deleteAll();
         fileRepository.deleteAll();
@@ -52,7 +51,7 @@ class PostServiceTest {
 
 
     @BeforeEach
-    public void setMemberRepository() {
+    void setMemberRepository() {
         Member nick = Member.builder()
                 .address(testAddress)
                 .memberNickName("nick")
@@ -65,7 +64,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("게시글 등록")
-    public void post() throws Exception {
+    void post() throws Exception {
         //given
         Member member = memberRepository.findByAddress(testAddress).get();
 
@@ -76,7 +75,7 @@ class PostServiceTest {
                 .build();
 
         //when
-        postService.save(member.getId(), post);
+        postService.save(post);
 
         //then
         Assertions.assertThat(postRepository.count()).isEqualTo(1);
@@ -84,8 +83,8 @@ class PostServiceTest {
 
 
     @Test
-    @DisplayName("@Notempty에 값이 없을 경우 예외를 발생한다.")
-    public void noTitle() throws Exception {
+    @DisplayName("제목이 없을 경우 예외를 발생한다.")
+    void noTitle() throws Exception {
         //given
         Member member = memberRepository.findByAddress(testAddress).get();
         Post post = Post.builder()
@@ -95,15 +94,14 @@ class PostServiceTest {
                 .build();
 
         //expect
-        Assertions.assertThatThrownBy(() -> postService.save(member.getId(), post))
+        Assertions.assertThatThrownBy(() -> postService.save(post))
                         .isInstanceOf(ConstraintViolationException.class);
     }
 
 
-//    @Test
-    @DisplayName("파일 추가해서 올리기")
-    public void filePost() throws Exception {
-
+    @Test
+    @DisplayName("게시글 단건 조회하기")
+    void getPost() throws Exception {
         //given
         Member member = memberRepository.findByAddress(testAddress).get();
         Post post = Post.builder()
@@ -111,19 +109,31 @@ class PostServiceTest {
                 .content(exampleContent)
                 .member(member)
                 .build();
-
+        Long postId = postService.save(post);
         //when
-        FilePath store = storageService.store(multipartFile, member.getAddress());
-        FilePath store1 = storageService.store(multipartFile, member.getAddress());
-        FilePath store2 = storageService.store(multipartFile, member.getAddress());
-        post.saveFilePath(store1);
-        post.saveFilePath(store2);
-        post.saveFilePath(store);
-        postService.save(member.getId(), post);
+        Post post1 = postService.get(postId);
 
         //then
-        Assertions.assertThat(postRepository.findAll().size()).isEqualTo(1L);
+        Assertions.assertThat(post1.getId()).isEqualTo(postId);
+    }
 
+    @Test
+    @DisplayName("게시글 삭제하기")
+    void delete() throws Exception {
+        //given
+        Member member = memberRepository.findByAddress(testAddress).get();
+        Post post = Post.builder()
+                .title(exampleTitle)
+                .content(exampleContent)
+                .member(member)
+                .build();
+        Long postId = postService.save(post);
+
+        //when
+        postService.delete(postId);
+
+        //then
+        Assertions.assertThat(postRepository.count()).isEqualTo(0L);
     }
 
 }
