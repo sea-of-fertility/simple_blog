@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/chat-blog/join", "/chat-blog/","/chat-blog/public/**", "/logout", "/chat-blog/login").permitAll()
                         .requestMatchers("/mypage").hasRole("USER")
-                        .requestMatchers("/chat-blog/post").hasRole("USER")
+                        .requestMatchers("/chat-blog/user/**").hasRole("USER")
                         .requestMatchers("/member").hasRole("USER")
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().fullyAuthenticated());

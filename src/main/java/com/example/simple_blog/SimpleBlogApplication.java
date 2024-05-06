@@ -1,7 +1,7 @@
 package com.example.simple_blog;
 
 import com.example.simple_blog.config.properties.StorageProperties;
-import com.example.simple_blog.service.post.file.StorageService;
+import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +18,7 @@ public class SimpleBlogApplication {
         SpringApplication.run(SimpleBlogApplication.class, args);
     }
     @Bean
-    CommandLineRunner init(StorageService storageService) {
+    CommandLineRunner init(FileSystemStorageService storageService) {
         return (args) -> {
             storageService.deleteAll();
             storageService.init();
