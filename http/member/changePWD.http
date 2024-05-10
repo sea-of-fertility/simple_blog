@@ -1,8 +1,8 @@
-POST http://localhost:8080/chat-blog/changed/pwd
+PATCH http://localhost:8080/chat-blog/user/member/changed/pwd
 Content-Type: application/json
-access: eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsImFkZHJlc3MiOiJobGxvc0BnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzEzOTY3MDE4LCJleHAiOjE3MTM5NzA2MTh9.FAvm0TLFY6IZ9PoiYi_VC6wR52HFyxo5eNQzt3wnXcM
+access: eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsImFkZHJlc3MiOiJoZWxsb0BnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzE1MzMwMDc0LCJleHAiOjE3MTUzMzM2NzR9.1GyFW8aOvzs0_X_igbY2sbeQhIIqzLXnRhKG-F2SDVw
 
 {
-  "beforePassword" : "new1234@",
-  "afterPassword" : "@1213eee"
+  "beforePassword" : "@1213eee",
+  "afterPassword" : "a12345678@"
 }
