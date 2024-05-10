@@ -15,7 +15,7 @@ public class Refresh {
     private Long id;
 
     @Column(nullable = false)
-    private String userAddress;
+    private String memberAddress;
 
     @Column(nullable = false)
     private String refresh;
@@ -24,8 +24,8 @@ public class Refresh {
     private Long expired;
 
     @Builder
-    public Refresh(String userAddress, String refresh, Long expired) {
-        this.userAddress = userAddress;
+    public Refresh(String memberAddress, String refresh, Long expired) {
+        this.memberAddress = memberAddress;
         this.refresh = refresh;
         this.expired = expired;
     }
