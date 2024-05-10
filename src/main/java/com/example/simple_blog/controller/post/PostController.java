@@ -76,7 +76,7 @@ public class PostController {
         return new ResponseEntity<>(postResponse, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/user/{postId}")
+    @DeleteMapping("/user/post/{postId}")
     @PreAuthorize("hasRole('USER')")
     public HttpEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
         Post post = postService.get(postId);
@@ -101,11 +101,7 @@ public class PostController {
                 .post(post)
                 .paths(load)
                 .build();
-
-
             log.info("file path {}",load);
-
-
         getResponse.add(linkTo(methodOn(PostController.class).getOnePost(memberId, postId)).withSelfRel());
 
         return new ResponseEntity<>(getResponse, HttpStatus.OK);

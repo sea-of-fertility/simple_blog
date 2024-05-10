@@ -5,6 +5,7 @@ import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.request.member.JoinDto;
 import com.example.simple_blog.request.member.NewPwdDTO;
+import com.example.simple_blog.request.member.PasswordDTO;
 import com.example.simple_blog.response.member.MemberResponse;
 import com.example.simple_blog.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +31,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/")
+
+    @GetMapping("/public/")
     public String home() {
         return "hello home";
     }
 
-    @PostMapping("/join")
+    @PostMapping("/public/join")
     public HttpEntity<MemberResponse> memberJoin(@RequestBody @Validated JoinDto joinDto) {
 
         Member member = joinDto.toEntity();
@@ -50,7 +52,19 @@ public class MemberController {
         return new ResponseEntity<>(memberResponse, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/changed/pwd")
+    @DeleteMapping("/user/member")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PasswordDTO passwordDTO) throws MemberNotFoundException {
+
+        String address = userDetails.getUsername();
+        Member member = memberService.findByAddress(address);
+        memberService.delete(member, passwordDTO.getPassword());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @PatchMapping("/user/member/changed/pwd")
     @PreAuthorize("hasRole('USER')")
     public HttpEntity<Void> ChangePWD(@AuthenticationPrincipal UserDetails userDetails, @RequestBody NewPwdDTO changePWDDto) throws MemberNotFoundException {
         String address = userDetails.getUsername();
@@ -65,6 +79,7 @@ public class MemberController {
 
         return  ResponseEntity.ok().build();
     }
+
 
 
 }
