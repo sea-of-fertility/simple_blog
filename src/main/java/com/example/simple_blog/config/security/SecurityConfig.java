@@ -4,6 +4,7 @@ import com.example.simple_blog.config.filter.LoginFilter;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.security.jwt.JwtFilter;
 import com.example.simple_blog.security.jwt.JwtUtil;
+import com.example.simple_blog.service.token.AccessTokenService;
 import com.example.simple_blog.service.token.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -57,12 +58,10 @@ public class SecurityConfig {
         http.
                 securityMatcher("/**")
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/chat-blog/join", "/chat-blog/","/chat-blog/public/**", "/logout", "/chat-blog/login").permitAll()
-                        .requestMatchers("/mypage").hasRole("USER")
+                        .requestMatchers("/chat-blog/public/**").permitAll()
                         .requestMatchers("/chat-blog/user/**").hasRole("USER")
-                        .requestMatchers("/member").hasRole("USER")
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .anyRequest().fullyAuthenticated());
+                        .requestMatchers("/chat-blog/admin").hasRole("ADMIN")
+                        .anyRequest().denyAll());
 
         http
                 .addFilterAt(LoginFilter.builder()
