@@ -1,5 +1,6 @@
 package com.example.simple_blog.config.security;
 
+import com.example.simple_blog.config.filter.CustomLogoutFilter;
 import com.example.simple_blog.config.filter.LoginFilter;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.security.jwt.JwtFilter;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +34,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenService refreshTokenService;
     private final TokenProperties tokenProperties;
-
+    private final AccessTokenService accessTokenService;
 
     @Value("${login.url}")
     private String defaultUrl;
@@ -76,7 +78,17 @@ public class SecurityConfig {
                         , UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(JwtFilter.builder()
+                        .jwtUtil(jwtUtil)
+                        .accessTokenService(accessTokenService)
+                        .build(), LoginFilter.class);
+
+        http
+                .addFilterBefore(CustomLogoutFilter.builder()
+                        .jwtUtil(jwtUtil)
+                        .accessTokenService(accessTokenService)
+                        .refreshTokenService(refreshTokenService)
+                        .build(), LogoutFilter.class);
 
         http
                 .csrf(AbstractHttpConfigurer::disable);
