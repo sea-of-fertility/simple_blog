@@ -31,7 +31,7 @@ class SecurityConfigTest {
     @WithMockUser(authorities = "ROLE_ADMIN")
     @Test
     public void memberPage() throws Exception {
-        this.mockMvc.perform(get("/chat-blog/"))
+        this.mockMvc.perform(get("/chat-blog/admin"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
