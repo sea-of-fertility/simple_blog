@@ -1,7 +1,6 @@
 package com.example.simple_blog.config.filter;
 
 import com.example.simple_blog.config.properties.TokenProperties;
-import com.example.simple_blog.domain.token.Refresh;
 import com.example.simple_blog.exception.member.login.LoginFailedException;
 import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.service.token.RefreshTokenService;
@@ -24,7 +23,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 
 import static com.example.simple_blog.config.properties.TokenProperties.ACCESS_TOKEN_NAME;
@@ -88,28 +86,18 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
         String refresh = jwtUtil.createJwt(REFRESH_TOKEN_NAME, address, role,
                 tokenProperties.getRefreshTokenExpirationDays());
 
-        addRefresh(address, refresh, tokenProperties.getRefreshTokenExpirationDays());
+        refreshTokenService.save(address, refresh, tokenProperties.getRefreshTokenExpirationDays());
 
         response.setHeader(ACCESS_TOKEN_NAME, access);
-        response.addCookie(createCookie(REFRESH_TOKEN_NAME, refresh));
+        response.addCookie(createCookie(refresh));
         response.setStatus(HttpStatus.OK.value());
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        throw new LoginFailedException();
+        throw new LoginFailedException("아이디 혹은 비밀번호를 다시 입력해주세요.");
     }
 
-    private void addRefresh(String address, String refresh, Long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
-        Refresh refreshDomain = Refresh.builder()
-                .userAddress(address)
-                .refresh(refresh)
-                .expired(date.getTime())
-                .build();
-
-        refreshTokenService.save(refreshDomain);
-    }
 
     @Getter
     private static class LoginJson {
@@ -118,8 +106,8 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
     }
 
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
+    private Cookie createCookie(String value) {
+        Cookie cookie = new Cookie(REFRESH_TOKEN_NAME,value);
         cookie.setHttpOnly(true);
         return cookie;
     }
