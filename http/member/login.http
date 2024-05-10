@@ -1,4 +1,4 @@
-POST http://localhost:8080/chat-blog/login
+POST http://localhost:8080/chat-blog/public/login
 Content-Type: application/json
 
 {
