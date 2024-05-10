@@ -3,10 +3,19 @@ spring:
     active: database
 
 login:
-  url: /chat-blog/login
+  url: /chat-blog/public/login
+
+logout:
+  url: /chat-blog/user/logout
 
 front:
   url: ??
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
 
 security:
   token:
