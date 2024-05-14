@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value = "access", timeToLive = 10)
+@RedisHash(value = "access", timeToLive = 1)
 public class Access {
 
     @Id
