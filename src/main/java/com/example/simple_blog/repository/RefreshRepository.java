@@ -8,7 +8,11 @@ public interface RefreshRepository extends JpaRepository<Refresh, Long> {
 
     Boolean existsByRefresh(String refresh);
 
-    Boolean existsByUserAddress(String address);
+    Boolean existsByMemberAddress(String address);
+
+
+    @Transactional
+    void deleteByMemberAddress(String address);
 
     @Transactional
     void deleteByRefresh(String refresh);
