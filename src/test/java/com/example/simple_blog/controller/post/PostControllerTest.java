@@ -167,9 +167,9 @@ class PostControllerTest {
         Long id = postService.save(post);
 
         //expect
-        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/{postId}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/post/{postId}", id))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
