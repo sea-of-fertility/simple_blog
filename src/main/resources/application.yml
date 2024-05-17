@@ -20,6 +20,6 @@ server:
 security:
   token:
     access:
-      expirationMinutes: 60
+      expirationMinutes: 15
     refresh:
       expirationDays: 1
