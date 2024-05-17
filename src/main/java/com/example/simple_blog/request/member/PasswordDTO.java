@@ -1,2 +1,17 @@
-package com.example.simple_blog.request.member;public class PasswordDTO {
+package com.example.simple_blog.request.member;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class PasswordDTO {
+    private String password;
+
+    @Builder
+    public PasswordDTO(String password) {
+        this.password = password;
+    }
 }
