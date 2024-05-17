@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -43,6 +42,15 @@ public class MemberService {
             throw e;
         }
             }
+
+    public void delete(Member member, String password) {
+        if (passwordEncoder.matches(password, member.getPassword())) {
+            memberRepository.delete(member);
+        } else {
+            throw new InvalidPasswordException("정확한 현재 비밀번호를 입력해 주세요.");
+        }
+    }
+
 
     @Transactional
     public void passwordChange(Member member, String beforePWD, String afterPWD) {
