@@ -4,8 +4,8 @@ package com.example.simple_blog.service.token;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.token.Refresh;
 import com.example.simple_blog.exception.token.RefreshTokenNotFoundException;
-import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.response.NewToken;
+import com.example.simple_blog.security.jwt.JwtUtil;
 import com.example.simple_blog.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -28,12 +28,9 @@ public class RefreshTokenService {
     private final TokenProperties tokenProperties;
 
 
-    public Boolean checkRefreshToken(String refresh) {
-        return refreshRepository.existsByRefresh(refresh);
-    }
 
 
-    public void deleteRefreshToken(String refresh) {
+    public void deleteByRefresh(String refresh) {
         refreshRepository.deleteByRefresh(refresh);
     }
 
@@ -69,27 +66,15 @@ public class RefreshTokenService {
                 .createJwt(REFRESH_TOKEN_NAME, address, role,
                         tokenProperties.getRefreshTokenExpirationDays());
 
-        refreshRepository.deleteByRefresh(refresh);
+        refreshRepository.deleteByMemberAddress(address);
 
-        addRefreshEntity(address, refresh, tokenProperties.getRefreshTokenExpirationDays());
+        this.save(address, refresh, tokenProperties.getRefreshTokenExpirationDays());
         Cookie newCookies = createCookies(REFRESH_TOKEN_NAME, newRefresh);
 
         return NewToken.builder()
                 .newAccessToken(newAccess)
                 .newCookie(newCookies)
                 .build();
-    }
-
-
-    private void addRefreshEntity(String address, String refresh, Long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
-        Refresh refreshEntity = Refresh.builder()
-                .userAddress(address)
-                .refresh(refresh)
-                .expired(date.getTime())
-                .build();
-
-        save(refreshEntity);
     }
 
 
@@ -100,11 +85,21 @@ public class RefreshTokenService {
         return cookie;
     }
 
+    public void save(String address, String refresh, Long expiredMs) {
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+        Refresh refreshEntity = Refresh.builder()
+                .memberAddress(address)
+                .refresh(refresh)
+                .expired(date.getTime())
+                .build();
+
+        refreshRepository.save(refreshEntity);
+    }
 
     public void save(Refresh refresh) {
-
-        String userAddress = refresh.getUserAddress();
-        if(!refreshRepository.existsByUserAddress(userAddress))
+        if (refreshRepository.existsByMemberAddress(refresh.getMemberAddress())) {
+            refreshRepository.deleteByMemberAddress(refresh.getMemberAddress());
+        }
             refreshRepository.save(refresh);
     }
 
