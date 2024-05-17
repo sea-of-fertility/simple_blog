@@ -1,39 +1,32 @@
 package com.example.simple_blog.service.token;
 
 
-import com.example.simple_blog.domain.token.Access;
+import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.exception.token.AccessTokenInvalidException;
-import com.example.simple_blog.repository.AccessRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class AccessTokenService {
 
+    private final StringRedisTemplate stringRedisTemplate;
+    private final TokenProperties tokenProperties;
 
-    private final Boolean valid = true;
-
-    private final AccessRepository accessRepository;
-
-
-    public void setBlackList(String access) {
-        Access build = Access.builder()
-                .accessToken(access)
-                .build();
-        accessRepository.save(build);
+    public void setBlackList(String access, String address) {
+        stringRedisTemplate.opsForValue().set(access, address, tokenProperties.getAccessTokenExpirationMinutes(), TimeUnit.MINUTES);
     }
 
-
-    public Boolean existByAccessToken(String accessToken) {
-        return accessRepository.existsByAccessToken(accessToken);
-    }
-
-
-    public Boolean existBlackList(String accessToken) {
-        if (!this.existByAccessToken(accessToken)) {
-            return this.valid;
+    public Boolean isValidAccessToken(String accessToken) {
+        if(Boolean.TRUE.equals(stringRedisTemplate.hasKey(accessToken))){
+            throw new AccessTokenInvalidException("로그아웃된 access token 입니다.");
         }
-        throw new AccessTokenInvalidException("로그아웃된 accessToken 입니다.");
+        return true;
     }
+
+
 }
+
