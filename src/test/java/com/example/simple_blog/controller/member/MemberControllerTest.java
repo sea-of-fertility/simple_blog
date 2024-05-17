@@ -1,9 +1,12 @@
 package com.example.simple_blog.controller.member;
 
 import com.example.simple_blog.domain.member.Member;
+import com.example.simple_blog.repository.FileRepository;
 import com.example.simple_blog.repository.MemberRepository;
-import com.example.simple_blog.request.member.NewPwdDTO;
+import com.example.simple_blog.repository.PostRepository;
 import com.example.simple_blog.request.member.JoinDto;
+import com.example.simple_blog.request.member.NewPwdDTO;
+import com.example.simple_blog.request.member.PasswordDTO;
 import com.example.simple_blog.service.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,14 +42,23 @@ class MemberControllerTest {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    PostRepository postRepository;
+    @Autowired
+    FileRepository fileRepository;
+
     private String testPassword = "a12345678@";
     private String testChangePassword = "new145678@";
-    final String userAddress = "hello@gmail.com";
+    final String userAddress = "hello2@gmail.com";
 
     @AfterEach
     public void setMemberRepository() {
+
+        postRepository.deleteAll();
         memberRepository.deleteAll();
+        fileRepository.deleteAll();memberRepository.deleteAll();
     }
+
 
 
     @Test
@@ -64,7 +78,7 @@ class MemberControllerTest {
         String json = objectMapper.writeValueAsString(nick);
 
         //given
-        mockMvc.perform(post("/chat-blog/join")
+        mockMvc.perform(post("/chat-blog/public/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andDo(print())
@@ -92,15 +106,38 @@ class MemberControllerTest {
 
         String s = objectMapper.writeValueAsString(build1);
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/chat-blog/changed/pwd")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/chat-blog/user/member/changed/pwd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(s))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-
     }
 
+    @Test
+    @WithMockUser(username = userAddress)
+    void deleteMember() throws Exception {
+        Member build = Member.builder()
+                .address(userAddress)
+                .role("ROLE_USER")
+                .memberNickName("nick")
+                .password(testPassword)
+                .memberName("realName")
+                .build();
+        memberService.save(build);
 
+        PasswordDTO passwordDTO = PasswordDTO.builder()
+                .password(testPassword)
+                .build();
+
+        String json = objectMapper.writeValueAsString(passwordDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/member")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    }
 
 }
