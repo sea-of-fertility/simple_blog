@@ -2,6 +2,7 @@ package com.example.simple_blog.service.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.MemberException;
+import com.example.simple_blog.exception.member.join.DuplicateException;
 import com.example.simple_blog.exception.member.join.InvalidEmailException;
 import com.example.simple_blog.exception.member.join.InvalidNickNameException;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
@@ -87,7 +88,7 @@ class MemberServiceTest {
                     .password(testPassword)
                     .build();
             memberService.save(nick);
-        }).isInstanceOf(InvalidEmailException.class);
+        }).isInstanceOf(DuplicateException.class);
     }
 
     @Test
@@ -114,7 +115,7 @@ class MemberServiceTest {
                             .password(testPassword)
                             .build();
                     memberService.save(duplicate);
-                }).isInstanceOf(InvalidNickNameException.class);
+                }).isInstanceOf(DuplicateException.class);
     }
 
 

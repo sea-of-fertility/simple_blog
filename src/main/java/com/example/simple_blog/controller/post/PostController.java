@@ -6,6 +6,7 @@ import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.exception.post.UnauthorizedDeletionException;
 import com.example.simple_blog.request.post.PostDTO;
+import com.example.simple_blog.response.post.DeleteResponse;
 import com.example.simple_blog.response.post.GetPostsResponse;
 import com.example.simple_blog.response.post.GetResponse;
 import com.example.simple_blog.response.post.PostResponse;
@@ -78,12 +79,16 @@ public class PostController {
 
     @DeleteMapping("/user/post/{postId}")
     @PreAuthorize("hasRole('USER')")
-    public HttpEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
+    public HttpEntity<DeleteResponse> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
         Post post = postService.get(postId);
         if (userDetails.getUsername().equals(post.getMember().getAddress())) {
+            DeleteResponse deleteResponse = DeleteResponse.builder()
+                    .deleteBy(userDetails.getUsername())
+                    .build();
             postService.delete(postId);
             storageService.delete(post);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            deleteResponse.add(linkTo(methodOn(PostController.class).delete(userDetails, postId)).withSelfRel());
+            return new ResponseEntity<>(deleteResponse, HttpStatus.NO_CONTENT);
         } else {
             throw new UnauthorizedDeletionException();
         }
@@ -118,6 +123,7 @@ public class PostController {
         Page<Post> posts = postService.getPosts(pageable);
 
         GetPostsResponse getPostsResponse = new GetPostsResponse();
+
 
 
         for (Post post : posts) {

@@ -4,10 +4,13 @@ package com.example.simple_blog.controller;
 import com.example.simple_blog.exception.member.join.DuplicateException;
 import com.example.simple_blog.exception.member.join.InvalidException;
 import com.example.simple_blog.exception.member.login.LoginException;
+import com.example.simple_blog.exception.post.PostException;
 import com.example.simple_blog.exception.token.TokenException;
 import com.example.simple_blog.response.error.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,18 +50,26 @@ public class ExceptionController {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DuplicateException.class)
+    @ExceptionHandler(InvalidException.class)
     public ErrorResponse invalidRequestHandler(InvalidException ex) {
         return getErrorResponse(String.valueOf(ex.statusCode()), ex.getMessage());
     }
 
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LoginException.class)
-    public ErrorResponse invalidRequestHandler(LoginException ex) {
-        return getErrorResponse(String.valueOf(ex.statusCode()), ex.getMessage());
+    public HttpEntity<ErrorResponse> invalidRequestHandler(LoginException ex) {
+        ErrorResponse errorResponse = getErrorResponse(String.valueOf(ex.statusCode()), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseBody
+    @ExceptionHandler(PostException.class)
+    public HttpEntity<String> invalidRequestHandler(PostException ex) {
+        return ResponseEntity.status(ex.statusCode()).body(ex.getMessage());
+    }
+
+
 
 
 

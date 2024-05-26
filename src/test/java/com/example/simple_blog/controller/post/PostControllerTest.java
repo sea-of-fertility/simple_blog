@@ -173,6 +173,26 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("권한없는 접근으로 게시글 삭제시 예외를 발생")
+    @WithMockUser(username = "fali@gmail.com", roles = "USER")
+    void deleteFail() throws Exception {
+        //given
+        Member member = memberRepository.findByAddress(testAddress).get();
+        Post post = Post.builder()
+                .title(testTitle)
+                .content(testContent)
+                .member(member)
+                .build();
+        Long id = postService.save(post);
+
+
+        //expect
+        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/post/{postId}", id))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     @DisplayName("여러개의 게시글 조회하기")
     void getPosts() throws Exception {
         //given
