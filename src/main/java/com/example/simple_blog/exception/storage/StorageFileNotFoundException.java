@@ -15,8 +15,4 @@ public class StorageFileNotFoundException extends StorageException{
         super(message, cause);
     }
 
-    @Override
-    public int statusCode() {
-        return 404;
-    }
 }

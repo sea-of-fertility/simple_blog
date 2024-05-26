@@ -2,8 +2,8 @@ package com.example.simple_blog.service.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.MemberException;
-import com.example.simple_blog.exception.member.join.DuplicateNickName;
-import com.example.simple_blog.exception.member.join.DuplicatedAddress;
+import com.example.simple_blog.exception.member.join.InvalidEmailException;
+import com.example.simple_blog.exception.member.join.InvalidNickNameException;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
@@ -87,7 +87,7 @@ class MemberServiceTest {
                     .password(testPassword)
                     .build();
             memberService.save(nick);
-        }).isInstanceOf(DuplicatedAddress.class);
+        }).isInstanceOf(InvalidEmailException.class);
     }
 
     @Test
@@ -114,7 +114,7 @@ class MemberServiceTest {
                             .password(testPassword)
                             .build();
                     memberService.save(duplicate);
-                }).isInstanceOf(DuplicateNickName.class);
+                }).isInstanceOf(InvalidNickNameException.class);
     }
 
 

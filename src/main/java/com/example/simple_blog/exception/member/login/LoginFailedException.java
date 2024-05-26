@@ -1,8 +1,6 @@
 package com.example.simple_blog.exception.member.login;
 
-import javax.security.auth.login.LoginException;
-
-public class LoginFailedException extends RuntimeException {
+public class LoginFailedException extends LoginException {
 
     private final static String MESSAGE = "Login Failed";
 
@@ -16,5 +14,10 @@ public class LoginFailedException extends RuntimeException {
 
     public LoginFailedException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    @Override
+    public int statusCode() {
+        return 404;
     }
 }

@@ -1,8 +1,6 @@
 package com.example.simple_blog.exception.member.join;
 
-import com.example.simple_blog.exception.member.MemberException;
-
-public class InvalidEmailException extends JoinException {
+public class InvalidEmailException extends DuplicateException {
 
     private final static String MESSAGE = "유효하지 않는 이메일 형식입니다.";
 
@@ -16,5 +14,10 @@ public class InvalidEmailException extends JoinException {
 
     public InvalidEmailException(String MESSAGE, Throwable cause) {
         super(MESSAGE, cause);
+    }
+
+    @Override
+    public int statusCode() {
+        return 409;
     }
 }

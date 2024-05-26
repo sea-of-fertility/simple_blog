@@ -37,7 +37,7 @@ public class MemberService {
             member.passwordEncode(encode);
             return memberRepository.save(member);
 
-        } catch (JoinException e) {
+        } catch (DuplicateException e) {
             log.info("잘못된 형식의 가입시도 {}", e.getMessage());
             throw e;
         }
@@ -69,13 +69,13 @@ public class MemberService {
 
     public void checkJoin(Member member) {
         if (memberRepository.existsByAddress(member.getAddress())) {
-            throw new DuplicatedAddress();
+            throw new DuplicatedEmailException("중복된 이메일입니다.");
         }
         else if (!JoinValidator.isValidEmail(member.getAddress())) {
             throw new InvalidEmailException();
         }
         else if (memberRepository.existsByMemberNickName(member.getMemberNickName())){
-            throw new DuplicateNickName();
+            throw new DuplicateNickNameException("중복된 닉네임입니다.");
         }
         else if(!JoinValidator.isValidNickName(member.getMemberNickName())){
             throw new InvalidNickNameException();

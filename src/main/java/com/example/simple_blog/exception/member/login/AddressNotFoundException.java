@@ -1,8 +1,6 @@
 package com.example.simple_blog.exception.member.login;
 
-import javax.naming.AuthenticationException;
-
-public class AddressNotFoundException extends RuntimeException {
+public class AddressNotFoundException extends LoginException {
 
     private final static String MESSAGE = "가입되지 않은 이메일입니다.";
 
@@ -12,5 +10,10 @@ public class AddressNotFoundException extends RuntimeException {
 
     public AddressNotFoundException(String explanation) {
         super(explanation);
+    }
+
+    @Override
+    public int statusCode() {
+        return 404;
     }
 }
