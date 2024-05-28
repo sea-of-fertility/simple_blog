@@ -5,11 +5,9 @@ import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.exception.post.UnauthorizedDeletionException;
+import com.example.simple_blog.request.post.EditeDTO;
 import com.example.simple_blog.request.post.PostDTO;
-import com.example.simple_blog.response.post.DeleteResponse;
-import com.example.simple_blog.response.post.GetPostsResponse;
-import com.example.simple_blog.response.post.GetResponse;
-import com.example.simple_blog.response.post.PostResponse;
+import com.example.simple_blog.response.post.*;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.PostService;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
@@ -77,9 +75,34 @@ public class PostController {
         return new ResponseEntity<>(postResponse, HttpStatus.CREATED);
     }
 
+
+    @PatchMapping("/user/post/{postId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<EditeResponse> edite(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId,
+                                               @RequestBody EditeDTO editeDTO) {
+
+        String username = userDetails.getUsername();
+        Post byId = postService.findById(postId);
+        if (byId.getMember().getAddress().equals(username)) {
+            postService.edit(postId, Post.builder()
+                    .content(editeDTO.getContent())
+                    .title(editeDTO.getTitle())
+                    .build());
+            EditeResponse editeResponse = EditeResponse.builder()
+                    .title(editeDTO.getTitle())
+                    .content(editeDTO.getContent())
+                    .build();
+
+            editeResponse.add(linkTo(methodOn(PostController.class).edite(userDetails, postId, editeDTO)).withSelfRel());
+            return new ResponseEntity<>(editeResponse, HttpStatus.OK);
+        }
+        throw new UnauthorizedDeletionException();
+    }
+
+
     @DeleteMapping("/user/post/{postId}")
     @PreAuthorize("hasRole('USER')")
-    public HttpEntity<DeleteResponse> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
+    public ResponseEntity<DeleteResponse> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
         Post post = postService.get(postId);
         if (userDetails.getUsername().equals(post.getMember().getAddress())) {
             DeleteResponse deleteResponse = DeleteResponse.builder()
@@ -96,7 +119,7 @@ public class PostController {
 
 
     @GetMapping("/public/{memberId}/{postId}")
-    public HttpEntity<GetResponse> getOnePost(@PathVariable("memberId") Long memberId, @PathVariable("postId") Long postId) throws MemberNotFoundException {
+    public ResponseEntity<GetResponse> getOnePost(@PathVariable("memberId") Long memberId, @PathVariable("postId") Long postId) throws MemberNotFoundException {
         Member byMemberId = memberService.findByMemberId(memberId);
         Post post = postService.findById(postId);
         List<String> load = storageService.load(post.getId());
@@ -113,7 +136,7 @@ public class PostController {
 
 
     @GetMapping("/public/{memberId}")
-    public HttpEntity<GetPostsResponse> getAllPosts(@PathVariable Long memberId,
+    public ResponseEntity<GetPostsResponse> getAllPosts(@PathVariable Long memberId,
                                                  @PageableDefault(size = 5, page = 0, sort = "id", direction = Sort.Direction.DESC)
                                                  Pageable pageable) throws MemberNotFoundException {
 
@@ -129,4 +152,5 @@ public class PostController {
 
         return new ResponseEntity<>(getPostsResponse, HttpStatus.OK);
     }
+
 }

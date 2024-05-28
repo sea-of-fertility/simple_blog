@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.Optional;
+
 @SpringBootTest
 class PostServiceTest {
     private String exampleTitle = "title";
@@ -79,6 +81,33 @@ class PostServiceTest {
 
         //then
         Assertions.assertThat(postRepository.count()).isEqualTo(1);
+    }
+
+
+    @Test
+    @DisplayName("edit")
+    void edit() throws Exception {
+        //given
+        Member member = memberRepository.findByAddress(testAddress).get();
+
+        Post post = Post.builder()
+                .title(exampleTitle)
+                .content(exampleContent)
+                .member(member)
+                .build();
+        postService.save(post);
+        Post editePost = Post.builder()
+                .title("newTitle")
+                .content("newContent")
+                .build();
+
+        //when
+        postService.edit(post.getId(), editePost);
+
+        //then
+        Post getPost = postRepository.findById(post.getId()).orElseThrow();
+        Assertions.assertThat(getPost.getTitle()).isEqualTo(editePost.getTitle());
+        Assertions.assertThat(getPost.getContent()).isEqualTo(editePost.getContent());
     }
 
 

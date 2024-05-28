@@ -6,6 +6,7 @@ import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.repository.MemberRepository;
 import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.request.post.EditeDTO;
 import com.example.simple_blog.request.post.PostDTO;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.PostService;
@@ -18,10 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -126,6 +131,35 @@ class PostControllerTest {
                 .file(post))
                 .andDo(print())
                 .andExpect(status().isCreated());
+    }
+
+
+    @Test
+    @WithMockUser(username = testAddress)
+    @DisplayName("게시글 수정하기")
+    void edite() throws Exception {
+        //given
+        Member member = memberRepository.findByAddress(testAddress).get();
+        Post post = Post.builder()
+                .title(testTitle)
+                .content(testContent)
+                .member(member)
+                .build();
+        Post savePost = postService.save(post);
+
+        EditeDTO editeDTO = EditeDTO.builder()
+                .title("newTile")
+                .content("newContent")
+                .build();
+
+        String json = objectMapper.writeValueAsString(editeDTO);
+
+        //expect
+        mockMvc.perform(MockMvcRequestBuilders.patch("/chat-blog/user/post/{postId}", savePost.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
 
