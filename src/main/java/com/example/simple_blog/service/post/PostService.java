@@ -3,6 +3,7 @@ package com.example.simple_blog.service.post;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.post.PostNotFoundException;
 import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,18 +14,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final FileSystemStorageService fileSystemStorageService;
     private final PostRepository postRepository;
 
-    public Long save(Post post){
-        return postRepository.save(post).getId();
+    public Post save(Post post){
+        return postRepository.save(post);
     }
 
     public Post get(Long id) {
         return postRepository.findById(id).orElseThrow(PostNotFoundException::new);
     }
 
-    public void delete(Long postId) {
-        postRepository.deleteById(postId);
+    public void delete(Post post) {
+        fileSystemStorageService.delete(post);
+        postRepository.deleteById(post.getId());
 
     }
 

@@ -139,15 +139,15 @@ class PostControllerTest {
                 .content(testContent)
                 .member(member)
                 .build();
-        Long id = postService.save(post);
+        Post savePost = postService.save(post);
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt",
                 "text/plain", "Spring Framework".getBytes());
 
-        FilePath store = storageService.store(multipartFile, member.getAddress(), post);
+        FilePath store = storageService.store(multipartFile, member.getAddress(), savePost);
         System.out.println(store.getPost().getId());
         //expect
-        mockMvc.perform(get("/chat-blog/public/{memberId}/{postId}", member.getId(), id))
+        mockMvc.perform(get("/chat-blog/public/{memberId}/{postId}", member.getId(), savePost.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -164,10 +164,10 @@ class PostControllerTest {
                 .content(testContent)
                 .member(member)
                 .build();
-        Long id = postService.save(post);
+        Post id = postService.save(post);
 
         //expect
-        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/post/{postId}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/post/{postId}", id.getId()))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
@@ -183,11 +183,11 @@ class PostControllerTest {
                 .content(testContent)
                 .member(member)
                 .build();
-        Long id = postService.save(post);
+        Post id = postService.save(post);
 
 
         //expect
-        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/post/{postId}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/chat-blog/user/post/{postId}", id.getId()))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
@@ -204,7 +204,7 @@ class PostControllerTest {
                     .content(testContent)
                     .member(member)
                     .build();
-            Long id = postService.save(post);
+            Post id = postService.save(post);
         }
 
         //expect

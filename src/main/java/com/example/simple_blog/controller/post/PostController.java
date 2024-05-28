@@ -85,8 +85,7 @@ public class PostController {
             DeleteResponse deleteResponse = DeleteResponse.builder()
                     .deleteBy(userDetails.getUsername())
                     .build();
-            postService.delete(postId);
-            storageService.delete(post);
+            postService.delete(post);
             deleteResponse.add(linkTo(methodOn(PostController.class).delete(userDetails, postId)).withSelfRel());
             return new ResponseEntity<>(deleteResponse, HttpStatus.NO_CONTENT);
         } else {
@@ -124,14 +123,10 @@ public class PostController {
 
         GetPostsResponse getPostsResponse = new GetPostsResponse();
 
-
-
         for (Post post : posts) {
             getPostsResponse.add(post);
         }
 
         return new ResponseEntity<>(getPostsResponse, HttpStatus.OK);
     }
-
-
 }

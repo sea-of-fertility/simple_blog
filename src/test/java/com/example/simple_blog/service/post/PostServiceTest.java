@@ -109,12 +109,12 @@ class PostServiceTest {
                 .content(exampleContent)
                 .member(member)
                 .build();
-        Long postId = postService.save(post);
+        Post savePost = postService.save(post);
         //when
-        Post post1 = postService.get(postId);
+        Post getPost = postService.get(savePost.getId());
 
         //then
-        Assertions.assertThat(post1.getId()).isEqualTo(postId);
+        Assertions.assertThat(getPost.getId()).isEqualTo(savePost.getId());
     }
 
     @Test
@@ -127,7 +127,7 @@ class PostServiceTest {
                 .content(exampleContent)
                 .member(member)
                 .build();
-        Long postId = postService.save(post);
+        Post postId = postService.save(post);
 
         //when
         postService.delete(postId);
