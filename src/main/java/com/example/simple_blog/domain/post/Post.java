@@ -42,7 +42,6 @@ public class Post {
     private List<FilePath> filePaths = new ArrayList<>();
 
 
-//    private AtomicLong likeCount = new AtomicLong();
 
     @Builder
     public Post(String title, String content, Member member) {

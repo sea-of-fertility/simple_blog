@@ -16,7 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.IntStream;
 
 @SpringBootTest
 class PostServiceTest {
@@ -145,6 +146,38 @@ class PostServiceTest {
         //then
         Assertions.assertThat(getPost.getId()).isEqualTo(savePost.getId());
     }
+
+
+    @Test
+    @DisplayName("게시글 여러개 조회하기")
+    void getPosts() throws Exception {
+        //given
+        Member member = memberRepository.findByAddress(testAddress).get();
+        List<Post> post = IntStream.range(0, 20).mapToObj(i -> Post.builder()
+                .title("title" + i)
+                .content("content" + i)
+                .member(member)
+                .build())
+                .toList();
+
+        postRepository.saveAll(post);
+
+        //when
+        List<Post> posts = postService.getPosts(post.get(post.size()-1).getId());
+
+        //then
+
+        Assertions.assertThat(posts.size()).isEqualTo(10);
+
+        Long lastId = post.get(post.size()-1).getId();
+        IntStream.range(0, posts.size())
+                .forEach(i -> {
+                    Long expectedId = lastId - i;
+                    Long actualId = posts.get(i).getId();
+                    Assertions.assertThat(actualId).isEqualTo(expectedId);
+                });
+    }
+
 
     @Test
     @DisplayName("게시글 삭제하기")

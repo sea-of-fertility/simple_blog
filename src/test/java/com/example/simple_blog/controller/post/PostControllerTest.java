@@ -24,13 +24,15 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -187,6 +189,8 @@ class PostControllerTest {
     }
 
 
+
+
     @Test
     @WithMockUser(username = testAddress, roles = "USER")
     @DisplayName("게시글 삭제하기")
@@ -232,18 +236,21 @@ class PostControllerTest {
         //given
         Member member = memberRepository.findByAddress(testAddress).get();
 
-        for (int i = 0; i < 1; i++) {
-            Post post = Post.builder()
-                    .title(testTitle + String.valueOf(i))
-                    .content(testContent)
-                    .member(member)
-                    .build();
-            Post id = postService.save(post);
-        }
+        List<Post> list = IntStream.range(0, 30).mapToObj(i -> Post.builder()
+                        .title("tite" + i)
+                        .content("content" + i)
+                        .member(member)
+                        .build())
+                .toList();
+
+        postRepository.saveAll(list);
+        Long lastIndex = postService.getLatestPostIdByMemberId(member.getId());
 
         //expect
-        mockMvc.perform(get("/chat-blog/public/{memberId}", member.getId()))
+        mockMvc.perform(get("/chat-blog/public/{memberId}", member.getId())
+                        .param("lastIndex", String.valueOf(lastIndex)))
                 .andDo(print())
+                .andExpect(jsonPath("$.posts.length()").value(10))
                 .andExpect(status().isOk());
     }
 

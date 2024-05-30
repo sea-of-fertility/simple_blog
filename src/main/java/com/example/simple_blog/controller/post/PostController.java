@@ -13,11 +13,6 @@ import com.example.simple_blog.service.post.PostService;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -78,31 +73,39 @@ public class PostController {
 
     @PatchMapping("/user/post/{postId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<EditeResponse> edite(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId,
+    public ResponseEntity<EditeResponse> edite(@AuthenticationPrincipal UserDetails userDetails,
+                                               @PathVariable(name = "postId") Long postId,
                                                @RequestBody EditeDTO editeDTO) {
 
         String username = userDetails.getUsername();
         Post byId = postService.findById(postId);
+
         if (byId.getMember().getAddress().equals(username)) {
             postService.edit(postId, Post.builder()
                     .content(editeDTO.getContent())
                     .title(editeDTO.getTitle())
                     .build());
+
             EditeResponse editeResponse = EditeResponse.builder()
                     .title(editeDTO.getTitle())
                     .content(editeDTO.getContent())
                     .build();
 
-            editeResponse.add(linkTo(methodOn(PostController.class).edite(userDetails, postId, editeDTO)).withSelfRel());
+            editeResponse.add(linkTo(methodOn(PostController.class)
+                    .edite(userDetails, postId, editeDTO))
+                    .withSelfRel());
+
             return new ResponseEntity<>(editeResponse, HttpStatus.OK);
         }
+
         throw new UnauthorizedDeletionException();
     }
 
 
     @DeleteMapping("/user/post/{postId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<DeleteResponse> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "postId") Long postId) {
+    public ResponseEntity<DeleteResponse> delete(@AuthenticationPrincipal UserDetails userDetails,
+                                                 @PathVariable(name = "postId") Long postId) {
         Post post = postService.get(postId);
         if (userDetails.getUsername().equals(post.getMember().getAddress())) {
             DeleteResponse deleteResponse = DeleteResponse.builder()
@@ -119,12 +122,11 @@ public class PostController {
 
 
     @GetMapping("/public/{memberId}/{postId}")
-    public ResponseEntity<GetResponse> getOnePost(@PathVariable("memberId") Long memberId, @PathVariable("postId") Long postId) throws MemberNotFoundException {
-        Member byMemberId = memberService.findByMemberId(memberId);
+    public ResponseEntity<GetResponse> getOnePost(@PathVariable("memberId") Long memberId,
+                                                  @PathVariable("postId") Long postId) {
         Post post = postService.findById(postId);
         List<String> load = storageService.load(post.getId());
         GetResponse getResponse = GetResponse.builder()
-                .author(byMemberId.getAddress())
                 .post(post)
                 .paths(load)
                 .build();
@@ -137,18 +139,18 @@ public class PostController {
 
     @GetMapping("/public/{memberId}")
     public ResponseEntity<GetPostsResponse> getAllPosts(@PathVariable Long memberId,
-                                                 @PageableDefault(size = 5, page = 0, sort = "id", direction = Sort.Direction.DESC)
-                                                 Pageable pageable) throws MemberNotFoundException {
+                                                        @RequestParam(name = "lastIndex", required = false) Long lastIndex)
+        throws MemberNotFoundException {
 
-        Member byMemberId = memberService.findByMemberId(memberId);
+        lastIndex = lastIndex == null? postService.getLatestPostIdByMemberId(memberId): lastIndex;
 
-        Page<Post> posts = postService.getPosts(pageable);
+        List<Post> posts = postService.getPosts(lastIndex);
 
-        GetPostsResponse getPostsResponse = new GetPostsResponse();
+        GetPostsResponse getPostsResponse = GetPostsResponse.builder()
+                .posts(posts)
+                .build();
 
-        for (Post post : posts) {
-            getPostsResponse.add(post);
-        }
+        getPostsResponse.add(linkTo(methodOn(PostController.class).getAllPosts(memberId, lastIndex)).withSelfRel());
 
         return new ResponseEntity<>(getPostsResponse, HttpStatus.OK);
     }

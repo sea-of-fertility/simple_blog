@@ -4,11 +4,12 @@ import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.post.PostNotFoundException;
 import com.example.simple_blog.repository.PostRepository;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,13 +18,16 @@ public class PostService {
     private final FileSystemStorageService fileSystemStorageService;
     private final PostRepository postRepository;
 
+
     public Post save(Post post){
         return postRepository.save(post);
     }
 
+
     public Post get(Long id) {
         return postRepository.findById(id).orElseThrow(PostNotFoundException::new);
     }
+
 
     public void delete(Post post) {
         fileSystemStorageService.delete(post);
@@ -31,13 +35,22 @@ public class PostService {
 
     }
 
+
     public Post findById(Long id) {
         return postRepository.findById(id).orElseThrow(PostNotFoundException::new);
     }
 
-    public Page<Post> getPosts(Pageable pageable) {
-        return postRepository.findAll(pageable);
+    @Transactional(readOnly = true)
+    public List<Post> getPosts(Long lastIndex) {
+        return postRepository.getPosts(lastIndex);
     }
+
+
+
+    public Long getLatestPostIdByMemberId(Long memberId) {
+        return postRepository.findLatestPostIdByMemberId(memberId);
+    }
+
 
     @Transactional
     public Post edit(Long id, Post edite) {
