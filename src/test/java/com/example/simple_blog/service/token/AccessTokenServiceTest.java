@@ -2,8 +2,10 @@ package com.example.simple_blog.service.token;
 
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.exception.token.TokenException;
+import com.example.simple_blog.repository.AccessTokenRepository;
 import com.example.simple_blog.security.jwt.JwtUtil;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,14 @@ class AccessTokenServiceTest {
 
     @Autowired
     AccessTokenService accessTokenService;
+    @Autowired
+    private AccessTokenRepository accessTokenRepository;
+
+
+    @BeforeEach
+    void setAccessTokenRepository() {
+        accessTokenRepository.deleteAll();
+    }
 
 
     @Test
@@ -56,12 +66,9 @@ class AccessTokenServiceTest {
         //given
         String access = jwtUtil.createJwt(ACCESS_TOKEN_NAME, address, role,
                 tokenProperties.getAccessTokenExpirationMinutes());
-
-        String address1 = jwtUtil.getAddress(access);
-        accessTokenService.setBlackList(access, address1);
+        accessTokenService.setBlackList(access);
 
         //then
-        Assertions.assertThatThrownBy(() -> accessTokenService.isValidAccessToken(access)).isInstanceOf(TokenException.class);
-
+        Assertions.assertThatThrownBy(()-> accessTokenService.isValidAccessToken(access)).isInstanceOf(TokenException.class);
     }
 }

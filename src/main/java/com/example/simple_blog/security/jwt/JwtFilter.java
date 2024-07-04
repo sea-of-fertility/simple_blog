@@ -47,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        try {
+        try{
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
             throw new AccessTokenExpiredException();

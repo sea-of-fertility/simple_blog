@@ -83,7 +83,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             throw new AccessTokenInvalidException();
         }
         String address = jwtUtil.getAddress(accessToken);
-        accessTokenService.setBlackList(accessToken, address);
+        accessTokenService.setBlackList(accessToken);
         log.info("set black list access token = {}", accessToken);
     }
 

@@ -114,8 +114,10 @@ class FileSystemStorageServiceTest {
 
         postRepository.save(post);
 
+
         //given
         storageService.store(multipartFile, testEmail, post);
+
 
         //when
         postRepository.deleteById(post.getId());
