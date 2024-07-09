@@ -34,7 +34,6 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
 
 
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final TokenProperties tokenProperties;
     private final RefreshTokenService refreshTokenService;
@@ -42,11 +41,10 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
 
     @Builder
     public LoginFilter(String defaultFilterProcessesUrl, JwtUtil jwtUtil,
-                       AuthenticationManager authenticationManager, ObjectMapper objectMapper, TokenProperties tokenProperties,
+                       ObjectMapper objectMapper, TokenProperties tokenProperties,
                        RefreshTokenService refreshTokenService) {
         super(defaultFilterProcessesUrl);
         this.jwtUtil = jwtUtil;
-        this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
         this.tokenProperties = tokenProperties;
         this.refreshTokenService = refreshTokenService;
@@ -61,10 +59,9 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter{
                 .unauthenticated(loginJson.getAddress(),
                         loginJson.getPassword());
 
-        // Allow subclasses to set the "details" property
         this.setDetails(request, authRequest);
-
-        return this.authenticationManager.authenticate(authRequest);
+        return this.getAuthenticationManager().authenticate(authRequest);
+//        return this.authenticationManager.authenticate(authRequest);
     }
 
     protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {

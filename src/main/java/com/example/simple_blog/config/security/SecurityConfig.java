@@ -70,8 +70,6 @@ public class SecurityConfig {
                         .defaultFilterProcessesUrl(defaultUrl)
                         .objectMapper(objectMapper)
                         .jwtUtil(jwtUtil)
-
-                        .authenticationManager(authenticationManager(authenticationConfiguration))
                         .refreshTokenService(refreshTokenService)
                         .tokenProperties(tokenProperties)
                         .build()
