@@ -26,7 +26,7 @@
 
 
 # ERD
-![erd](https://github.com/sea-of-fertility/simple_blog/assets/96536414/f264aac6-6d60-4ac7-91cd-b1435098b967)
+![erd](https://github.com/user-attachments/assets/8cadf863-c751-45c7-b796-b370a8857a5c)
 
 # 개선 사항
 + [RefreshToken](src/main/java/com/example/simple_blog/config/schedul/RefreshTokenCheck.java)schedul의 학습을 위해 이러한 방식을 사용했지만 RefreshToken 또한 redis에 저장하는 방식을 사용하자.
