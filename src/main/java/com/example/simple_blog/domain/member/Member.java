@@ -1,6 +1,7 @@
 package com.example.simple_blog.domain.member;
 
 
+import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -37,6 +38,9 @@ public class Member {
     private final LocalDate joinTime = LocalDate.now();
 
     private String role;
+
+    @OneToMany(mappedBy = "author")
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
