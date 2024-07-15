@@ -3,6 +3,8 @@ package com.example.simple_blog.domain.post;
 
 import com.example.simple_blog.domain.member.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Comment {
 
@@ -38,4 +40,13 @@ public class Comment {
     @CreatedDate
     @Column(nullable = false)
     private LocalDate createTime;
+
+    @Builder
+    public Comment(Comment parent, String content, Member author, Post post) {
+        this.parent = parent;
+        this.content = content;
+        this.author = author;
+        this.post = post;
+    }
+
 }
