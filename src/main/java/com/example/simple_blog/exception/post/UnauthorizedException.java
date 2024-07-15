@@ -1,14 +1,14 @@
 package com.example.simple_blog.exception.post;
 
-public class UnauthorizedDeletionException extends PostException{
+public class UnauthorizedException extends PostException{
 
     private final static String MESSAGE = "권한이 없는 사용자입니다.";
 
-    public UnauthorizedDeletionException() {
+    public UnauthorizedException() {
         super();
     }
 
-    public UnauthorizedDeletionException(String message) {
+    public UnauthorizedException(String message) {
         super(message);
     }
 
