@@ -2,7 +2,7 @@ package com.example.simple_blog.service.post;
 
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.post.PostNotFoundException;
-import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.repository.post.PostRepository;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
 
 import lombok.RequiredArgsConstructor;

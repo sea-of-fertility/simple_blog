@@ -2,9 +2,9 @@ package com.example.simple_blog.service.post;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Post;
-import com.example.simple_blog.repository.FileRepository;
-import com.example.simple_blog.repository.MemberRepository;
-import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.repository.post.FileRepository;
+import com.example.simple_blog.repository.member.MemberRepository;
+import com.example.simple_blog.repository.post.PostRepository;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import jakarta.validation.ConstraintViolationException;
 import org.assertj.core.api.Assertions;

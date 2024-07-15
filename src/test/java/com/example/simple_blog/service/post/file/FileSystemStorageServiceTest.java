@@ -3,9 +3,9 @@ package com.example.simple_blog.service.post.file;
 import com.example.simple_blog.config.properties.StorageProperties;
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Post;
-import com.example.simple_blog.repository.FileRepository;
-import com.example.simple_blog.repository.MemberRepository;
-import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.repository.post.FileRepository;
+import com.example.simple_blog.repository.member.MemberRepository;
+import com.example.simple_blog.repository.post.PostRepository;
 import com.example.simple_blog.service.post.PostService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 
 
 @SpringBootTest

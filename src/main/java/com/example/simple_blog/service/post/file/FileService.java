@@ -1,7 +1,7 @@
 package com.example.simple_blog.service.post.file;
 
 import com.example.simple_blog.domain.post.FilePath;
-import com.example.simple_blog.repository.FileRepository;
+import com.example.simple_blog.repository.post.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

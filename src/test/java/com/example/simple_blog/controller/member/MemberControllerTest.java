@@ -1,9 +1,9 @@
 package com.example.simple_blog.controller.member;
 
 import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.repository.FileRepository;
-import com.example.simple_blog.repository.MemberRepository;
-import com.example.simple_blog.repository.PostRepository;
+import com.example.simple_blog.repository.post.FileRepository;
+import com.example.simple_blog.repository.member.MemberRepository;
+import com.example.simple_blog.repository.post.PostRepository;
 import com.example.simple_blog.request.member.JoinDto;
 import com.example.simple_blog.request.member.NewPwdDTO;
 import com.example.simple_blog.request.member.PasswordDTO;

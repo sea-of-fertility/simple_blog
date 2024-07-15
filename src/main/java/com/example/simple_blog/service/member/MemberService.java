@@ -4,7 +4,7 @@ package com.example.simple_blog.service.member;
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.join.*;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
-import com.example.simple_blog.repository.MemberRepository;
+import com.example.simple_blog.repository.member.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

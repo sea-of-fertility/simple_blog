@@ -2,7 +2,7 @@ package com.example.simple_blog.security;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.login.AddressNotFoundException;
-import com.example.simple_blog.repository.MemberRepository;
+import com.example.simple_blog.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
