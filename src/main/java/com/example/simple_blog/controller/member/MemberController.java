@@ -3,7 +3,7 @@ package com.example.simple_blog.controller.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
-import com.example.simple_blog.request.member.JoinDto;
+import com.example.simple_blog.request.member.JoinDTO;
 import com.example.simple_blog.request.member.NewPwdDTO;
 import com.example.simple_blog.request.member.PasswordDTO;
 import com.example.simple_blog.response.member.MemberResponse;
@@ -38,7 +38,7 @@ public class MemberController {
     }
 
     @PostMapping("/public/join")
-    public HttpEntity<MemberResponse> memberJoin(@RequestBody @Validated JoinDto joinDto) {
+    public HttpEntity<MemberResponse> memberJoin(@RequestBody @Validated JoinDTO joinDto) {
 
         Member member = joinDto.toEntity();
         Member save = memberService.save(member);

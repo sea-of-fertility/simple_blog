@@ -2,6 +2,7 @@ package com.example.simple_blog.service.post;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Post;
+import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.repository.post.FileRepository;
 import com.example.simple_blog.repository.member.MemberRepository;
 import com.example.simple_blog.repository.post.PostRepository;
@@ -69,7 +70,7 @@ class PostServiceTest {
     @DisplayName("게시글 등록")
     void post() throws Exception {
         //given
-        Member member = memberRepository.findByAddress(testAddress).get();
+        Member member = memberRepository.findByAddress(testAddress).orElseThrow(MemberNotFoundException::new);
 
         Post post = Post.builder()
                 .title(exampleTitle)
@@ -89,7 +90,7 @@ class PostServiceTest {
     @DisplayName("edit")
     void edit() throws Exception {
         //given
-        Member member = memberRepository.findByAddress(testAddress).get();
+        Member member = memberRepository.findByAddress(testAddress).orElseThrow(MemberNotFoundException::new);
 
         Post post = Post.builder()
                 .title(exampleTitle)
@@ -116,7 +117,7 @@ class PostServiceTest {
     @DisplayName("제목이 없을 경우 예외를 발생한다.")
     void noTitle() throws Exception {
         //given
-        Member member = memberRepository.findByAddress(testAddress).get();
+        Member member = memberRepository.findByAddress(testAddress).orElseThrow(MemberNotFoundException::new);
         Post post = Post.builder()
                 .title("")
                 .member(member)
@@ -133,7 +134,7 @@ class PostServiceTest {
     @DisplayName("게시글 단건 조회하기")
     void getPost() throws Exception {
         //given
-        Member member = memberRepository.findByAddress(testAddress).get();
+        Member member = memberRepository.findByAddress(testAddress).orElseThrow(MemberNotFoundException::new);
         Post post = Post.builder()
                 .title(exampleTitle)
                 .content(exampleContent)
@@ -152,7 +153,7 @@ class PostServiceTest {
     @DisplayName("게시글 여러개 조회하기")
     void getPosts() throws Exception {
         //given
-        Member member = memberRepository.findByAddress(testAddress).get();
+        Member member = memberRepository.findByAddress(testAddress).orElseThrow(MemberNotFoundException::new);
         List<Post> post = IntStream.range(0, 20).mapToObj(i -> Post.builder()
                 .title("title" + i)
                 .content("content" + i)
@@ -183,7 +184,7 @@ class PostServiceTest {
     @DisplayName("게시글 삭제하기")
     void delete() throws Exception {
         //given
-        Member member = memberRepository.findByAddress(testAddress).get();
+        Member member = memberRepository.findByAddress(testAddress).orElseThrow(MemberNotFoundException::new);
         Post post = Post.builder()
                 .title(exampleTitle)
                 .content(exampleContent)

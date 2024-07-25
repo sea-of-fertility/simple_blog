@@ -1,5 +1,6 @@
 package com.example.simple_blog.response.post;
 
+import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +21,6 @@ public class GetResponse extends RepresentationModel<GetResponse> {
     private String author;
     private LocalDate createTime;
     private List<String> paths = new ArrayList<>();
-
 
     @Builder
     public GetResponse(Post post, List<String> paths) {

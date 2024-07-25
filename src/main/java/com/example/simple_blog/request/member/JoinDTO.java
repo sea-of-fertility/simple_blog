@@ -10,7 +10,7 @@ import lombok.Getter;
 
 import static com.example.simple_blog.service.member.JoinValidator.*;
 @Getter
-public class  JoinDto {
+public class JoinDTO {
 
 
     @NotBlank
@@ -33,7 +33,7 @@ public class  JoinDto {
 
 
     @Builder
-    public JoinDto(String address, String memberNickName, String memberName, String password) {
+    public JoinDTO(String address, String memberNickName, String memberName, String password) {
         this.address = address;
         this.memberNickName = memberNickName;
         this.memberName = memberName;

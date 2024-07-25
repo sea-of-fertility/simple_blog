@@ -3,10 +3,7 @@ package com.example.simple_blog.domain.post;
 
 import com.example.simple_blog.domain.member.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
@@ -23,23 +20,27 @@ public class Comment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="post_id")
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    @Setter
     private Member author;
 
     @Lob
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
     private Comment parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
 
-    @CreatedDate
+    @Temporal(value = TemporalType.DATE)
     @Column(nullable = false)
-    private LocalDate createTime;
+    private final LocalDate createTime = LocalDate.now();
 
     @Builder
     public Comment(Comment parent, String content, Member author, Post post) {
@@ -48,5 +49,4 @@ public class Comment {
         this.author = author;
         this.post = post;
     }
-
 }

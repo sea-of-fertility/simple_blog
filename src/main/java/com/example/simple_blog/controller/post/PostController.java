@@ -1,14 +1,16 @@
 package com.example.simple_blog.controller.post;
 
 import com.example.simple_blog.domain.member.Member;
+import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
-import com.example.simple_blog.exception.post.UnauthorizedDeletionException;
+import com.example.simple_blog.exception.post.UnauthorizedException;
 import com.example.simple_blog.request.post.EditeDTO;
 import com.example.simple_blog.request.post.PostDTO;
 import com.example.simple_blog.response.post.*;
 import com.example.simple_blog.service.member.MemberService;
+import com.example.simple_blog.service.post.CommentService;
 import com.example.simple_blog.service.post.PostService;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,8 @@ public class PostController {
     private final PostService postService;
     private final FileSystemStorageService storageService;
     private final MemberService memberService;
+    private final CommentService commentService;
+
 
     @PostMapping("/user/post")
     @PreAuthorize("hasRole('USER')")
@@ -80,25 +84,22 @@ public class PostController {
         String username = userDetails.getUsername();
         Post byId = postService.findById(postId);
 
-        if (byId.getMember().getAddress().equals(username)) {
-            postService.edit(postId, Post.builder()
-                    .content(editeDTO.getContent())
-                    .title(editeDTO.getTitle())
-                    .build());
+        if (!byId.getMember().getAddress().equals(username))
+            throw new UnauthorizedException();
 
-            EditeResponse editeResponse = EditeResponse.builder()
-                    .title(editeDTO.getTitle())
-                    .content(editeDTO.getContent())
-                    .build();
+        postService.edit(postId, Post.builder()
+                .content(editeDTO.getContent())
+                .title(editeDTO.getTitle())
+                .build());
 
-            editeResponse.add(linkTo(methodOn(PostController.class)
-                    .edite(userDetails, postId, editeDTO))
-                    .withSelfRel());
+        EditeResponse editeResponse = EditeResponse.builder()
+                .title(editeDTO.getTitle())
+                .content(editeDTO.getContent())
+                .build().add(linkTo(methodOn(PostController.class)
+                        .edite(userDetails, postId, editeDTO))
+                        .withSelfRel());
 
-            return new ResponseEntity<>(editeResponse, HttpStatus.OK);
-        }
-
-        throw new UnauthorizedDeletionException();
+        return new ResponseEntity<>(editeResponse, HttpStatus.OK);
     }
 
 
@@ -107,17 +108,19 @@ public class PostController {
     public ResponseEntity<DeleteResponse> delete(@AuthenticationPrincipal UserDetails userDetails,
                                                  @PathVariable(name = "postId") Long postId) {
         Post post = postService.get(postId);
-        if (userDetails.getUsername().equals(post.getMember().getAddress())) {
-            DeleteResponse deleteResponse = DeleteResponse.builder()
-                    .deleteBy(userDetails.getUsername())
-                    .build();
-            postService.delete(post);
-            deleteResponse.add(linkTo(methodOn(PostController.class).delete(userDetails, postId)).withSelfRel());
-            return new ResponseEntity<>(deleteResponse, HttpStatus.NO_CONTENT);
-        } else {
-            throw new UnauthorizedDeletionException();
-        }
+        if (!userDetails.getUsername().equals(post.getMember().getAddress()))
+            throw new UnauthorizedException();
 
+        postService.delete(post);
+
+        DeleteResponse deleteResponse = DeleteResponse.builder()
+                .deleteBy(userDetails.getUsername())
+                .build()
+                .add(linkTo(methodOn(PostController.class)
+                        .delete(userDetails, postId))
+                        .withSelfRel());
+
+        return new ResponseEntity<>(deleteResponse, HttpStatus.NO_CONTENT);
     }
 
 
@@ -154,5 +157,6 @@ public class PostController {
 
         return new ResponseEntity<>(getPostsResponse, HttpStatus.OK);
     }
+
 
 }

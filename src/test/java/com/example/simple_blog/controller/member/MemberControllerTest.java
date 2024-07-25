@@ -4,12 +4,13 @@ import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.repository.post.FileRepository;
 import com.example.simple_blog.repository.member.MemberRepository;
 import com.example.simple_blog.repository.post.PostRepository;
-import com.example.simple_blog.request.member.JoinDto;
+import com.example.simple_blog.request.member.JoinDTO;
 import com.example.simple_blog.request.member.NewPwdDTO;
 import com.example.simple_blog.request.member.PasswordDTO;
 import com.example.simple_blog.service.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ class MemberControllerTest {
     final String userAddress = "hello2@gmail.com";
 
     @AfterEach
+    @BeforeEach
     public void setMemberRepository() {
-
         postRepository.deleteAll();
         memberRepository.deleteAll();
         fileRepository.deleteAll();memberRepository.deleteAll();
@@ -66,7 +67,7 @@ class MemberControllerTest {
     public void joinTest() throws Exception {
 
         //given
-        JoinDto nick = JoinDto.builder()
+        JoinDTO nick = JoinDTO.builder()
                 .address("hello@naver.com")
                 .memberNickName("nickaa")
                 .memberName("hello")

@@ -3,6 +3,7 @@ package com.example.simple_blog.domain.member;
 
 import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.Post;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,9 +41,11 @@ public class Member {
     private String role;
 
     @OneToMany(mappedBy = "author")
+    @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 
     public void passwordEncode(String encodedPassword) {

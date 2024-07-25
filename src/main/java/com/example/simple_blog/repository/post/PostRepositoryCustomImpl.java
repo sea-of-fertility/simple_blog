@@ -20,7 +20,6 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
 
-
     @Override
     public List<Post> getPosts(Long lastIndex) {
         return jpaQueryFactory
