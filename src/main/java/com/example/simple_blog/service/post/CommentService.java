@@ -4,7 +4,7 @@ package com.example.simple_blog.service.post;
 import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.exception.post.comment.CommentNotFoundException;
 import com.example.simple_blog.repository.post.comment.CommentRepository;
-import com.example.simple_blog.response.post.CommentResponse;
+import com.example.simple_blog.response.post.comment.Comments;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,9 +27,13 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
+    public Comment findByParentId(Long parentId) {
+        return commentRepository.findById(parentId).orElseThrow(CommentNotFoundException::new);
+    }
+
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> getComments(Long postId) {
+    public List<Comments> getComments(Long postId) {
         Long latestIndex = commentRepository.getFirstComment(postId);
         List<Comment> comments = commentRepository.getComments(postId, latestIndex);
         return sortComments(comments);
@@ -37,10 +41,8 @@ public class CommentService {
 
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> getComments(Long postId, Long startIndex) {
-
+    public List<Comments> getComments(Long postId, Long startIndex) {
         List<Comment> comments = commentRepository.getComments(postId, startIndex);
-
         return sortComments(comments);
     }
 
@@ -51,16 +53,17 @@ public class CommentService {
         }
     }
 
-    protected List<CommentResponse> sortComments(List<Comment> comments) {
-        List<CommentResponse> commentResponses = new ArrayList<>();
 
-        Map<Long, CommentResponse> commentMap = new HashMap<>();
+    private List<Comments> sortComments(List<Comment> commentList) {
+        List<Comments> comments = new ArrayList<>();
+        Map<Long, Comments> commentMap = new HashMap<>();
 
-        comments.forEach(comment -> {
-            CommentResponse commentResponse = CommentResponse.builder()
-                    .parent(comment.getParent())
+        commentList.forEach(comment -> {
+            Comments commentResponse = Comments.builder()
+                    .parentId(comment.getParent() != null? comment.getParent().getId():null)
                     .content(comment.getContent())
-                    .post(comment.getPost().getId())
+                    .commentId(comment.getId())
+                    .postId(comment.getPost().getId())
                     .createTime(comment.getCreateTime())
                     .author(comment.getAuthor().getMemberNickName())
                     .build();
@@ -68,14 +71,11 @@ public class CommentService {
             if (comment.getParent() != null) {
                 commentMap.get(comment.getParent().getId()).getChildren().add(commentResponse);
             } else {
-                commentResponses.add(commentResponse);
+                comments.add(commentResponse);
             }
 
             commentMap.put(comment.getId(), commentResponse);
         });
-
-        return commentResponses;
+        return comments;
     }
-
-
 }
