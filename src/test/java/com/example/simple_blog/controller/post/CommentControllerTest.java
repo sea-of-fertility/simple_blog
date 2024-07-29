@@ -93,7 +93,7 @@ class CommentControllerTest {
                         .build());
 
         //expect
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/chat-blog/user/comment/{postId}", post.getId())
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/chat-blog/user/comment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andDo(MockMvcResultHandlers.print())
