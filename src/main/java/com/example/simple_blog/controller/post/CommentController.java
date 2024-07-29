@@ -3,11 +3,14 @@ package com.example.simple_blog.controller.post;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Comment;
+import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.request.post.CommentDTO;
-import com.example.simple_blog.response.post.CommentResponse;
-import com.example.simple_blog.response.post.CommentsResponse;
+import com.example.simple_blog.response.post.comment.CommentResponse;
+import com.example.simple_blog.response.post.comment.Comments;
+import com.example.simple_blog.response.post.comment.CommentsResponse;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.CommentService;
+import com.example.simple_blog.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,23 +34,31 @@ public class CommentController {
 
     private final CommentService commentService;
     private final MemberService memberService;
-
+    private final PostService postService;
 
     @PostMapping("/user/comment")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CommentResponse> comment(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CommentDTO commentDto) {
+    public ResponseEntity<CommentResponse> comment(@AuthenticationPrincipal UserDetails userDetails,
+                                                   @RequestBody CommentDTO commentDto)
+    {
         Member member = memberService.findByAddress(userDetails.getUsername());
-        Comment save = commentService.save(commentDto.toEntity(member));
+        Comment parent = commentDto.getParentId() != null? commentService.findByParentId(commentDto.getParentId()): null;
+        Post post = postService.findById(commentDto.getPostId());
+
+        Comment comment = commentService.save(commentDto.toEntity(member, post, parent));
         CommentResponse commentResponse = CommentResponse.builder()
-                .parent(save.getParent())
-                .content(save.getContent())
+                .parent(comment.getParent())
+                .commentId(comment.getId())
+                .content(comment.getContent())
+                .createTime(comment.getCreateTime())
                 .author(member.getMemberNickName())
-                .post(save.getPost().getId())
+                .post(comment.getPost().getId())
                 .build()
                 .add(linkTo(methodOn(CommentController.class).comment(userDetails, commentDto)).withSelfRel());
 
         return new ResponseEntity<>(commentResponse, HttpStatus.OK);
     }
+
 
     @GetMapping("/public/comments/{postId}")
     public ResponseEntity<List<CommentResponse>> comments(@PathVariable Long postId) {
