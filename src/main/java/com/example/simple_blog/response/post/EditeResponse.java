@@ -10,6 +10,4 @@ public class EditeResponse extends RepresentationModel<EditeResponse> {
 
     private String title;
     private String content;
-
-
 }
