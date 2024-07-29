@@ -9,22 +9,24 @@ import lombok.Getter;
 
 @Getter
 public class CommentDTO {
+    private Long postId;
+    private Long parentId;
     private String content;
-    private Post post;
-    private Comment parent;
 
     @Builder
-    public CommentDTO(Post post, String content) {
-        this.post = post;
+    public CommentDTO(Long postId, String content, Long parentId) {
+        this.postId = postId;
+        this.parentId = parentId;
         this.content = content;
+
     }
 
-     public Comment toEntity(Member member) {
+     public Comment toEntity(Member member, Post post, Comment parent) {
         return Comment.builder()
-                .content(this.content)
-                .post(this.post)
-                .parent(this.parent)
                 .author(member)
+                .post(post)
+                .parent(parent)
+                .content(this.content)
                 .build();
     }
 }
