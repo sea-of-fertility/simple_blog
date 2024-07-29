@@ -87,9 +87,10 @@ class CommentControllerTest {
 
         //given
         String json = objectMapper.writeValueAsString(CommentDTO.builder()
-                .content("comment")
-                .post(post)
-                .build());
+                        .postId(post.getId())
+                        .parentId(null)
+                        .content(testContext)
+                        .build());
 
         //expect
         this.mockMvc.perform(MockMvcRequestBuilders.post("/chat-blog/user/comment/{postId}", post.getId())
