@@ -12,6 +12,7 @@ import com.example.simple_blog.service.post.CommentService;
 import com.example.simple_blog.service.post.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ class CommentControllerTest {
 
 
     @AfterEach
+    @BeforeEach
     void deleteRepository() {
         memberRepository.deleteAll();
         postRepository.deleteAll();
@@ -76,9 +78,8 @@ class CommentControllerTest {
     }
 
 
-
-
     @Test
+    @DisplayName("첫 댓글 작성하기")
     @WithMockUser(username = testAddress, roles = "USER")
     void createComment() throws Exception {
         Member member = getMember();
@@ -91,10 +92,13 @@ class CommentControllerTest {
                 .build());
 
         //expect
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/chat-blog/user/comment")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/chat-blog/user/comment/{postId}", post.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value(testContext))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(member.getMemberNickName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value(testContext))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
