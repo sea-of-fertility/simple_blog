@@ -61,9 +61,14 @@ public class CommentController {
 
 
     @GetMapping("/public/comments/{postId}")
-    public ResponseEntity<List<CommentResponse>> comments(@PathVariable Long postId) {
-        List<CommentResponse> comments = commentService.getComments(postId);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
+    public ResponseEntity<CommentsResponse> comments(@PathVariable Long postId) {
+        List<Comments> comments = commentService.getComments(postId);
+        CommentsResponse commentsResponse = CommentsResponse.builder()
+                .comments(comments)
+                .postId(postId)
+                .build()
+                .add(linkTo(methodOn(CommentController.class).comments(postId)).withSelfRel());
+        return new ResponseEntity<>(commentsResponse, HttpStatus.OK);
     }
 
 }
