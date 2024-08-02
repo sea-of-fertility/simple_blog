@@ -2,7 +2,7 @@ package com.example.simple_blog.service.token;
 
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.exception.token.TokenException;
-import com.example.simple_blog.repository.AccessTokenRepository;
+import com.example.simple_blog.repository.token.AccessTokenRepository;
 import com.example.simple_blog.security.jwt.JwtUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

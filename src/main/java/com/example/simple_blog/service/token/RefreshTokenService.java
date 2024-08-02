@@ -6,7 +6,7 @@ import com.example.simple_blog.domain.token.Refresh;
 import com.example.simple_blog.exception.token.RefreshTokenNotFoundException;
 import com.example.simple_blog.response.NewToken;
 import com.example.simple_blog.security.jwt.JwtUtil;
-import com.example.simple_blog.repository.RefreshRepository;
+import com.example.simple_blog.repository.token.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;

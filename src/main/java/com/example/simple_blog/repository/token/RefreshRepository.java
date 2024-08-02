@@ -1,4 +1,4 @@
-package com.example.simple_blog.repository;
+package com.example.simple_blog.repository.token;
 
 import com.example.simple_blog.domain.token.Refresh;
 import jakarta.transaction.Transactional;

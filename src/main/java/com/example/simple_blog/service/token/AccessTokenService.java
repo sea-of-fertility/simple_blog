@@ -4,7 +4,7 @@ package com.example.simple_blog.service.token;
 import com.example.simple_blog.config.properties.TokenProperties;
 import com.example.simple_blog.domain.token.AccessToken;
 import com.example.simple_blog.exception.token.AccessTokenInvalidException;
-import com.example.simple_blog.repository.AccessTokenRepository;
+import com.example.simple_blog.repository.token.AccessTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
