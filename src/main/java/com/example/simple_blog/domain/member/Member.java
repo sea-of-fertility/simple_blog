@@ -2,6 +2,7 @@ package com.example.simple_blog.domain.member;
 
 
 import com.example.simple_blog.domain.post.Comment;
+import com.example.simple_blog.domain.post.MemberPostLike;
 import com.example.simple_blog.domain.post.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -47,6 +48,11 @@ public class Member {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
     @JsonIgnore
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy ="member")
+    @JsonIgnore
+    private List<MemberPostLike> memberPostLikes = new ArrayList<>();
+
 
     public void passwordEncode(String encodedPassword) {
         this.password = encodedPassword;
