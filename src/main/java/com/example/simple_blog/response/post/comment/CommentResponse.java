@@ -1,4 +1,4 @@
-package com.example.simple_blog.response.post;
+package com.example.simple_blog.response.post.comment;
 
 import com.example.simple_blog.domain.post.Comment;
 import lombok.Builder;
@@ -12,16 +12,18 @@ import java.util.List;
 @Getter
 public class CommentResponse  extends RepresentationModel<CommentResponse>{
 
-    private String content;
-    private String author;
-    private Long postId;
-    private LocalDate createTime;
-    private Long parentId;
-    private List<CommentResponse> children = new ArrayList<>();
+    private final String content;
+    private final Long commentId;
+    private final String author;
+    private final Long postId;
+    private final LocalDate createTime;
+    private final Long parentId;
+    private final List<CommentResponse> children = new ArrayList<>();
 
 
     @Builder
-    public CommentResponse(String content, String author, Long post, Comment parent, LocalDate createTime) {
+    public CommentResponse(String content, String author, Long post, Comment parent, LocalDate createTime, Long commentId) {
+        this.commentId = commentId;
         this.content = content;
         this.author = author;
         this.createTime = createTime;
