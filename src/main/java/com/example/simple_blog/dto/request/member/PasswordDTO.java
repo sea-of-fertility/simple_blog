@@ -1,4 +1,4 @@
-package com.example.simple_blog.request.member;
+package com.example.simple_blog.dto.request.member;
 
 import lombok.AccessLevel;
 import lombok.Builder;

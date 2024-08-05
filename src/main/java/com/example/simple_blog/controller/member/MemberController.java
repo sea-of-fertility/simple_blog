@@ -3,10 +3,10 @@ package com.example.simple_blog.controller.member;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
-import com.example.simple_blog.request.member.JoinDTO;
-import com.example.simple_blog.request.member.NewPwdDTO;
-import com.example.simple_blog.request.member.PasswordDTO;
-import com.example.simple_blog.response.member.MemberResponse;
+import com.example.simple_blog.dto.request.member.JoinDTO;
+import com.example.simple_blog.dto.request.member.NewPwdDTO;
+import com.example.simple_blog.dto.request.member.PasswordDTO;
+import com.example.simple_blog.dto.response.member.MemberResponse;
 import com.example.simple_blog.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

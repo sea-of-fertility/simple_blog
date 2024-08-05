@@ -6,7 +6,7 @@ import com.example.simple_blog.exception.member.join.InvalidException;
 import com.example.simple_blog.exception.member.login.LoginException;
 import com.example.simple_blog.exception.post.PostException;
 import com.example.simple_blog.exception.token.TokenException;
-import com.example.simple_blog.response.error.ErrorResponse;
+import com.example.simple_blog.dto.response.error.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;

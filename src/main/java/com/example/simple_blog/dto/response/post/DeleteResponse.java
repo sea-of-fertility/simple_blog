@@ -1,4 +1,4 @@
-package com.example.simple_blog.response.post;
+package com.example.simple_blog.dto.response.post;
 
 import lombok.Builder;
 import org.springframework.hateoas.RepresentationModel;

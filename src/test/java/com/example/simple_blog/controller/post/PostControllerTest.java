@@ -6,8 +6,8 @@ import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.repository.member.MemberRepository;
 import com.example.simple_blog.repository.post.PostRepository;
-import com.example.simple_blog.request.post.EditeDTO;
-import com.example.simple_blog.request.post.PostDTO;
+import com.example.simple_blog.dto.request.post.EditeDTO;
+import com.example.simple_blog.dto.request.post.PostDTO;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.PostService;
 import com.example.simple_blog.service.post.file.FileSystemStorageService;
@@ -254,5 +254,15 @@ class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+
+    @Test
+    @DisplayName("좋아요 갯수")
+    void likeCount() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
 
 }

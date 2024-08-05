@@ -1,4 +1,4 @@
-package com.example.simple_blog.response.error;
+package com.example.simple_blog.dto.response.error;
 
 
 import lombok.Builder;

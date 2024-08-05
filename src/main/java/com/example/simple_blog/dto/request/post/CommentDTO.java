@@ -1,4 +1,4 @@
-package com.example.simple_blog.request.post;
+package com.example.simple_blog.dto.request.post;
 
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Comment;

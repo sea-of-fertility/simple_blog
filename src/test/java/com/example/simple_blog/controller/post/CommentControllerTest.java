@@ -6,7 +6,7 @@ import com.example.simple_blog.domain.post.Post;
 import com.example.simple_blog.repository.member.MemberRepository;
 import com.example.simple_blog.repository.post.PostRepository;
 import com.example.simple_blog.repository.post.comment.CommentRepository;
-import com.example.simple_blog.request.post.CommentDTO;
+import com.example.simple_blog.dto.request.post.CommentDTO;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.CommentService;
 import com.example.simple_blog.service.post.PostService;

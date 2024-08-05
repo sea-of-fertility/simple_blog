@@ -1,14 +1,13 @@
 package com.example.simple_blog.controller.post;
 
 import com.example.simple_blog.domain.member.Member;
-import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.FilePath;
 import com.example.simple_blog.domain.post.Post;
+import com.example.simple_blog.dto.response.post.*;
 import com.example.simple_blog.exception.member.login.MemberNotFoundException;
 import com.example.simple_blog.exception.post.UnauthorizedException;
-import com.example.simple_blog.request.post.EditeDTO;
-import com.example.simple_blog.request.post.PostDTO;
-import com.example.simple_blog.response.post.*;
+import com.example.simple_blog.dto.request.post.EditeDTO;
+import com.example.simple_blog.dto.request.post.PostDTO;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.CommentService;
 import com.example.simple_blog.service.post.PostService;

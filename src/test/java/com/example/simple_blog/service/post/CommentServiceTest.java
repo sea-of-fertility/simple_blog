@@ -7,7 +7,7 @@ import com.example.simple_blog.exception.post.PostException;
 import com.example.simple_blog.repository.member.MemberRepository;
 import com.example.simple_blog.repository.post.PostRepository;
 import com.example.simple_blog.repository.post.comment.CommentRepository;
-import com.example.simple_blog.response.post.comment.Comments;
+import com.example.simple_blog.dto.service.post.comment.CommentsDTO;
 import com.example.simple_blog.service.member.MemberService;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
@@ -180,7 +180,7 @@ class CommentServiceTest {
         //then
 
 
-        List<Comments> getComments = commentService.getComments(post.getId());
+        List<CommentsDTO> getComments = commentService.getComments(post.getId());
 
         // then
         Assertions.assertThat(getComments.isEmpty()).isFalse();

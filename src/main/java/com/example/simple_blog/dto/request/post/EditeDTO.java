@@ -1,4 +1,4 @@
-package com.example.simple_blog.request.post;
+package com.example.simple_blog.dto.request.post;
 
 import lombok.Builder;
 import lombok.Getter;

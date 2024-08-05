@@ -4,10 +4,10 @@ package com.example.simple_blog.controller.post;
 import com.example.simple_blog.domain.member.Member;
 import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.Post;
-import com.example.simple_blog.request.post.CommentDTO;
-import com.example.simple_blog.response.post.comment.CommentResponse;
-import com.example.simple_blog.response.post.comment.Comments;
-import com.example.simple_blog.response.post.comment.CommentsResponse;
+import com.example.simple_blog.dto.request.post.CommentDTO;
+import com.example.simple_blog.dto.response.post.comment.CommentResponse;
+import com.example.simple_blog.dto.service.post.comment.CommentsDTO;
+import com.example.simple_blog.dto.response.post.comment.CommentsResponse;
 import com.example.simple_blog.service.member.MemberService;
 import com.example.simple_blog.service.post.CommentService;
 import com.example.simple_blog.service.post.PostService;
@@ -62,7 +62,7 @@ public class CommentController {
 
     @GetMapping("/public/comments/{postId}")
     public ResponseEntity<CommentsResponse> comments(@PathVariable Long postId) {
-        List<Comments> comments = commentService.getComments(postId);
+        List<CommentsDTO> comments = commentService.getComments(postId);
         CommentsResponse commentsResponse = CommentsResponse.builder()
                 .comments(comments)
                 .postId(postId)

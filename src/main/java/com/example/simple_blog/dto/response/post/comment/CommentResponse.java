@@ -1,4 +1,4 @@
-package com.example.simple_blog.response.post.comment;
+package com.example.simple_blog.dto.response.post.comment;
 
 import com.example.simple_blog.domain.post.Comment;
 import lombok.Builder;

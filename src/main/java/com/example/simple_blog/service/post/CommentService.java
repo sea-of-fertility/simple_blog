@@ -4,7 +4,7 @@ package com.example.simple_blog.service.post;
 import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.exception.post.comment.CommentNotFoundException;
 import com.example.simple_blog.repository.post.comment.CommentRepository;
-import com.example.simple_blog.response.post.comment.Comments;
+import com.example.simple_blog.dto.service.post.comment.CommentsDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class CommentService {
 
 
     @Transactional(readOnly = true)
-    public List<Comments> getComments(Long postId) {
+    public List<CommentsDTO> getComments(Long postId) {
         Long latestIndex = commentRepository.getFirstComment(postId);
         List<Comment> comments = commentRepository.getComments(postId, latestIndex);
         return sortComments(comments);
@@ -41,7 +41,7 @@ public class CommentService {
 
 
     @Transactional(readOnly = true)
-    public List<Comments> getComments(Long postId, Long startIndex) {
+    public List<CommentsDTO> getComments(Long postId, Long startIndex) {
         List<Comment> comments = commentRepository.getComments(postId, startIndex);
         return sortComments(comments);
     }
@@ -54,12 +54,12 @@ public class CommentService {
     }
 
 
-    private List<Comments> sortComments(List<Comment> commentList) {
-        List<Comments> comments = new ArrayList<>();
-        Map<Long, Comments> commentMap = new HashMap<>();
+    private List<CommentsDTO> sortComments(List<Comment> commentList) {
+        List<CommentsDTO> comments = new ArrayList<>();
+        Map<Long, CommentsDTO> commentMap = new HashMap<>();
 
         commentList.forEach(comment -> {
-            Comments commentResponse = Comments.builder()
+            CommentsDTO commentResponse = CommentsDTO.builder()
                     .parentId(comment.getParent() != null? comment.getParent().getId():null)
                     .content(comment.getContent())
                     .commentId(comment.getId())

@@ -1,4 +1,4 @@
-package com.example.simple_blog.response.member;
+package com.example.simple_blog.dto.response.member;
 
 import lombok.Builder;
 import lombok.Getter;

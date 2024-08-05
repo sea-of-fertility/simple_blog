@@ -1,6 +1,5 @@
-package com.example.simple_blog.response.post;
+package com.example.simple_blog.dto.response.post;
 
-import com.example.simple_blog.domain.post.Comment;
 import com.example.simple_blog.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
